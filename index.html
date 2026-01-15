@@ -1,0 +1,3550 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام التقييم السريع الموحد - فالنسيا للرخام</title>
+    <style>
+        /* أنماط كلاسيكية احترافية */
+        @page {
+            size: A4;
+            margin: 0.5cm;
+        }
+
+        :root {
+            --primary-color: #1a365d;
+            --secondary-color: #c19a53;
+            --accent-color: #2c5282;
+            --light-color: #f8f9fa;
+            --dark-color: #2d3748;
+        }
+
+        body {
+            font-family: 'Arial', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f7fa;
+            color: #2d3748;
+            font-size: 11pt;
+            line-height: 1.5;
+            transition: all 0.3s ease;
+        }
+
+        body[dir="ltr"] {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .header {
+            border-bottom: 3px double #c19a53;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+            position: relative;
+            background: linear-gradient(135deg, #1a365d, #2c5282);
+            color: white;
+            padding: 15px;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            margin: 5px 0;
+            font-size: 22pt;
+            font-family: 'Times New Roman', serif;
+            letter-spacing: 1px;
+        }
+
+        .header h3 {
+            margin: 5px 0;
+            font-size: 12pt;
+            font-weight: normal;
+            opacity: 0.9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 10pt;
+            page-break-inside: avoid;
+            border: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: linear-gradient(135deg, #1a365d, #2c5282);
+            color: white;
+            padding: 6px 4px;
+            border: 1px solid #2c5282;
+            font-weight: bold;
+            text-align: center;
+            font-family: 'Times New Roman', serif;
+            font-size: 11pt;
+        }
+
+        td {
+            padding: 6px 4px;
+            border: 1px solid #e2e8f0;
+            vertical-align: middle;
+            font-size: 10pt;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .criteria-section {
+            margin-bottom: 12px;
+            page-break-inside: avoid;
+        }
+
+        .section-title {
+            background: linear-gradient(135deg, #2d3748, #4a5568);
+            color: white;
+            padding: 6px 12px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            border-right: 4px solid #c19a53;
+            border-radius: 4px;
+            font-family: 'Times New Roman', serif;
+            font-size: 12pt;
+        }
+
+        .department-special-section {
+            margin-top: 20px;
+            margin-bottom: 12px;
+            page-break-inside: avoid;
+            display: none;
+        }
+
+        /* أنماط التقييم من 1-5 */
+        .rating-options {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 5px 0;
+        }
+
+        .rating-option {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #cbd5e0;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            background: white;
+            font-size: 11pt;
+        }
+
+        .rating-option:hover {
+            border-color: #2c5282;
+            background: #e6f7ff;
+            transform: scale(1.1);
+        }
+
+        .rating-option.selected {
+            border-color: #c19a53;
+            background: linear-gradient(135deg, #c19a53, #e6b422);
+            color: white;
+            box-shadow: 0 2px 5px rgba(193, 154, 83, 0.3);
+        }
+
+        .rating-input {
+            display: none;
+        }
+
+        .notes-cell {
+            width: 25%;
+        }
+
+        .notes-cell textarea {
+            width: 100%;
+            height: 60px;
+            padding: 6px 8px;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            font-size: 10pt;
+            resize: vertical;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .weight-cell {
+            width: 10%;
+            text-align: center;
+            font-weight: bold;
+            color: #1a365d;
+        }
+
+        .input-small {
+            width: 60px;
+            padding: 4px;
+            text-align: center;
+            border: 1px solid #cbd5e0;
+            background: white;
+            font-size: 10.5pt;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+
+        .input-small:focus {
+            border-color: #2c5282;
+            box-shadow: 0 0 0 2px rgba(44, 82, 130, 0.2);
+            outline: none;
+        }
+
+        .score-display {
+            font-weight: bold;
+            text-align: center;
+            min-width: 40px;
+            display: inline-block;
+            padding: 3px 5px;
+            border-radius: 3px;
+            background: #edf2f7;
+            border: 1px solid #cbd5e0;
+            font-size: 10.5pt;
+        }
+
+        .final-score {
+            background: linear-gradient(135deg, #1a365d, #2c5282);
+            color: white;
+            padding: 6px 12px;
+            font-size: 12pt;
+            font-weight: bold;
+            text-align: center;
+            margin: 5px auto;
+            width: fit-content;
+            border-radius: 5px;
+            font-family: 'Times New Roman', serif;
+        }
+
+        .grade-box {
+            border: 1px solid #c19a53;
+            padding: 8px;
+            margin: 10px 0;
+            background: #fff;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .control-panel {
+            background: linear-gradient(135deg, #1a365d, #2c5282);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .btn {
+            padding: 8px 16px;
+            margin: 8px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+            font-size: 11pt;
+            min-width: 150px;
+            font-family: 'Times New Roman', serif;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+        }
+
+        .btn-print {
+            background: linear-gradient(135deg, #4a5568, #2d3748);
+            color: white;
+            border: 1px solid #2d3748;
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, #e53e3e, #c53030);
+            color: white;
+            border: 1px solid #c53030;
+        }
+
+        .btn-language {
+            background: linear-gradient(135deg, #38a169, #2f855a);
+            color: white;
+            border: 1px solid #2f855a;
+        }
+
+        input[type="text"], input[type="number"], textarea, select {
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            padding: 6px 8px;
+            font-size: 10.5pt;
+            transition: all 0.3s;
+            background: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        textarea.note-field {
+            width: 100% !important;
+            min-height: 70px !important;
+            font-size: 10.5pt !important;
+            line-height: 1.4 !important;
+            resize: vertical !important;
+            padding: 8px !important;
+            border: 1px solid #cbd5e0 !important;
+            border-radius: 4px !important;
+            background: white !important;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+            transition: all 0.3s !important;
+        }
+
+        textarea.note-field:focus {
+            border-color: #2c5282 !important;
+            box-shadow: 0 0 0 2px rgba(44, 82, 130, 0.1) !important;
+            outline: none !important;
+        }
+
+        .signature-section {
+            margin-top: 15px;
+            padding-top: 12px;
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 6px;
+            border-top: 2px solid #c19a53;
+            page-break-inside: avoid;
+            page-break-before: auto;
+            page-break-after: avoid;
+        }
+
+        .signature-box {
+            border: 1px solid #cbd5e0;
+            padding: 12px;
+            height: 110px !important;
+            border-radius: 5px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .signature-line {
+            border-bottom: 1px solid #2d3748;
+            margin-top: 15px;
+            padding-bottom: 6px;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .signature-box strong {
+            font-size: 11pt !important;
+            color: #1a365d;
+            font-family: 'Times New Roman', serif;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .signature-box div {
+            font-size: 10pt !important;
+            margin-top: 3px !important;
+            color: #4a5568;
+        }
+
+        .signature-box i.fa-stamp {
+            font-size: 22pt !important;
+            color: #c19a53 !important;
+            margin-top: 8px !important;
+            opacity: 0.9;
+        }
+
+        .notes-row td {
+            padding-top: 8px !important;
+            padding-bottom: 8px !important;
+            vertical-align: top !important;
+        }
+
+        .notes-row td:first-child {
+            width: 20% !important;
+            vertical-align: middle !important;
+            background: #f8fafc !important;
+            font-weight: bold !important;
+        }
+
+        /* مؤشر التحميل */
+        .loading-spinner {
+            display: none;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #c19a53;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* نظام الإشعارات المتقدم */
+        #notifications-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            max-width: 350px;
+        }
+
+        .notification {
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            animation: slideIn 0.3s ease-out;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 4px solid;
+        }
+
+        .notification-success {
+            background: #d4edda;
+            color: #155724;
+            border-left-color: #c3e6cb;
+        }
+
+        .notification-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left-color: #f5c6cb;
+        }
+
+        .notification-warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left-color: #ffeaa7;
+        }
+
+        .notification-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left-color: #bee5eb;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        /* نافذة التأكيد */
+        .confirmation-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .confirmation-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .confirmation-content h3 {
+            color: #1a365d;
+            margin-bottom: 15px;
+            font-family: 'Times New Roman', serif;
+        }
+
+        .confirmation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, #38a169, #2f855a);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-cancel {
+            background: linear-gradient(135deg, #a0aec0, #718096);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* لوحة الإحصائيات */
+        .statistics-panel {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* قسم المساعدة */
+        .help-section {
+            margin-top: 15px;
+            padding: 10px;
+            background: #e8f4fd;
+            border-radius: 5px;
+            border-left: 4px solid #2c5282;
+        }
+
+        /* التقييم السريع */
+        .quick-evaluation-section {
+            display: block;
+        }
+
+        .criteria-description {
+            font-size: 9pt;
+            color: #718096;
+            font-style: italic;
+            margin-top: 3px;
+            line-height: 1.3;
+        }
+
+        .sub-criteria {
+            font-size: 8.5pt;
+            color: #4a5568;
+            margin-top: 2px;
+            padding-right: 15px;
+        }
+
+        /* الطباعة - صفحة واحدة */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 0.3cm !important;
+            }
+
+            body {
+                font-size: 8pt !important;
+                background: white !important;
+                color: black !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                line-height: 1.2 !important;
+                position: relative;
+                min-height: 100vh;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            #evaluationForm {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                transform: scale(0.95);
+                transform-origin: top center;
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+            }
+
+            .header {
+                background: white !important;
+                color: black !important;
+                padding: 5px !important;
+                margin-bottom: 5px !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                border-bottom: 1px solid black !important;
+                flex-shrink: 0;
+            }
+
+            .header h1 {
+                font-size: 14pt !important;
+                margin: 2px 0 !important;
+            }
+
+            .header h3 {
+                font-size: 8pt !important;
+                margin: 2px 0 !important;
+            }
+
+            .control-panel, #auto-send-notification, .confirmation-modal,
+            .statistics-panel, .help-section {
+                display: none !important;
+            }
+
+            /* إظهار جميع أقسام التقييم في صفحة واحدة */
+            .criteria-section,
+            .department-special-section {
+                display: block !important;
+                margin-bottom: 8px !important;
+                page-break-inside: avoid !important;
+            }
+
+            /* إخفاء جميع الجداول الفرعية المحددة */
+            .department-special-section table:not(.visible-in-print) {
+                display: none !important;
+            }
+
+            .department-special-section table.visible-in-print {
+                display: table !important;
+            }
+
+            .main-content {
+                flex: 1 0 auto;
+            }
+
+            table {
+                box-shadow: none !important;
+                border: 1px solid black !important;
+                font-size: 7pt !important;
+                margin: 3px 0 !important;
+            }
+
+            th {
+                background: #f0f0f0 !important;
+                color: black !important;
+                border: 1px solid black !important;
+                padding: 3px 2px !important;
+                font-size: 7.5pt !important;
+            }
+
+            td {
+                border: 1px solid black !important;
+                padding: 3px 2px !important;
+                font-size: 7pt !important;
+            }
+
+            .grade-box {
+                border: 1px solid black !important;
+                padding: 4px !important;
+                margin: 5px 0 !important;
+                box-shadow: none !important;
+            }
+
+            .section-title {
+                background: #f0f0f0 !important;
+                color: black !important;
+                padding: 3px 6px !important;
+                margin-bottom: 2px !important;
+                border-right: 2px solid black !important;
+                font-size: 8pt !important;
+            }
+
+            .final-score {
+                background: #f0f0f0 !important;
+                color: black !important;
+                padding: 3px 6px !important;
+                margin: 2px auto !important;
+                font-size: 8pt !important;
+                box-shadow: none !important;
+                border-radius: 2px !important;
+            }
+
+            input[type="text"],
+            input[type="number"],
+            textarea,
+            select,
+            .input-small {
+                border: none !important;
+                background: transparent !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                width: auto !important;
+                box-shadow: none !important;
+                pointer-events: none;
+                font-size: 7pt !important;
+            }
+
+            textarea.note-field {
+                border: 1px solid #ccc !important;
+                background: #f9f9f9 !important;
+                min-height: 30px !important;
+                max-height: 35px !important;
+                padding: 2px !important;
+                font-size: 6.5pt !important;
+                line-height: 1.1 !important;
+                overflow: hidden !important;
+                white-space: pre-wrap !important;
+                word-wrap: break-word !important;
+            }
+
+            .input-small {
+                border: 1px solid #ccc !important;
+                background: #f9f9f9 !important;
+            }
+
+            .score-display {
+                border: 1px solid #ccc !important;
+                background: #f9f9f9 !important;
+                color: black !important;
+                font-size: 7pt !important;
+                padding: 1px 3px !important;
+            }
+
+            tr:nth-child(even),
+            tr:nth-child(odd) {
+                background: white !important;
+            }
+
+            tr[style*="background"] td {
+                background: inherit !important;
+            }
+
+            /* جعل قسم التواقيع في نهاية الصفحة */
+            .signature-section {
+                margin-top: 10px !important;
+                padding-top: 8px !important;
+                background: white !important;
+                padding: 8px !important;
+                border-top: 1px solid black !important;
+                page-break-inside: avoid !important;
+                page-break-before: auto !important;
+                page-break-after: avoid !important;
+                flex-shrink: 0;
+                margin-bottom: 0 !important;
+                position: relative;
+                bottom: 0;
+                width: 100%;
+            }
+
+            .signature-box {
+                border: 1px solid black !important;
+                background: white !important;
+                height: 70px !important;
+                padding: 5px !important;
+            }
+
+            .signature-line {
+                margin-top: 10px !important;
+                border-bottom: 1px solid black !important;
+                width: 70% !important;
+            }
+
+            .signature-box strong {
+                font-size: 7.5pt !important;
+            }
+
+            .signature-box div {
+                font-size: 6.5pt !important;
+            }
+
+            .signature-box i.fa-stamp {
+                font-size: 14pt !important;
+            }
+
+            thead { display: table-header-group; }
+            tfoot { display: table-footer-group; }
+
+            table, tr, td, th {
+                page-break-inside: avoid !important;
+                page-break-after: auto !important;
+                page-break-before: auto !important;
+            }
+
+            .criteria-section {
+                margin-bottom: 5px !important;
+                page-break-inside: avoid !important;
+            }
+
+            h1, h2, h3, h4 {
+                margin: 2px 0 !important;
+            }
+
+            .print-value {
+                display: inline !important;
+            }
+
+            .print-only {
+                font-size: 6pt !important;
+                margin-top: 5px !important;
+                padding-top: 3px !important;
+                border-top: 1px solid #ccc !important;
+                flex-shrink: 0;
+            }
+
+            .grade-box table {
+                border: none !important;
+            }
+
+            .grade-box table td {
+                border: none !important;
+                padding: 1px !important;
+            }
+
+            #final-grade-text {
+                font-size: 9pt !important;
+                margin: 2px 0 !important;
+            }
+
+            #report-status {
+                font-size: 8pt !important;
+                margin: 2px 0 !important;
+            }
+
+            #grade-description {
+                font-size: 7pt !important;
+                padding: 3px !important;
+                margin: 2px 0 !important;
+            }
+
+            /* عرض خيارات التقييم في الطباعة */
+            .rating-options {
+                gap: 3px !important;
+            }
+
+            .rating-option {
+                width: 20px !important;
+                height: 20px !important;
+                font-size: 6pt !important;
+                border: 1px solid #ccc !important;
+            }
+
+            .rating-option.selected {
+                border: 2px solid black !important;
+                background: #f0f0f0 !important;
+                color: black !important;
+                box-shadow: none !important;
+            }
+
+            /* نص المعايير في الطباعة */
+            .criteria-description, .sub-criteria {
+                font-size: 6pt !important;
+                line-height: 1.1 !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .btn { min-width: 130px; padding: 6px 10px; font-size: 10pt; }
+            .control-panel { padding: 12px; }
+            .input-small { width: 50px; }
+
+            textarea.note-field {
+                min-height: 60px !important;
+                font-size: 10pt !important;
+            }
+
+            .signature-box {
+                height: 90px !important;
+                padding: 8px !important;
+            }
+
+            .confirmation-content {
+                width: 95%;
+                padding: 15px;
+            }
+
+            .rating-options {
+                gap: 5px;
+            }
+
+            .rating-option {
+                width: 25px;
+                height: 25px;
+                font-size: 10pt;
+            }
+        }
+
+        .grade-box table {
+            border: none !important;
+            margin-bottom: 5px !important;
+        }
+
+        .grade-box table td {
+            border: none !important;
+            padding: 2px !important;
+        }
+
+        #grade-description {
+            padding-top: 5px !important;
+            margin-top: 5px !important;
+            font-size: 10pt !important;
+        }
+
+        /* تحسين عرض النتائج */
+        .result-summary {
+            background: linear-gradient(135deg, #f0f9f0, #e8f4fd);
+            padding: 8px;
+            border-radius: 5px;
+            margin: 8px 0;
+            border-left: 4px solid #c19a53;
+        }
+
+        .auto-calculation-note {
+            font-size: 9pt;
+            color: #718096;
+            text-align: center;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        /* تنسيق للتأكد من بقاء التوقيع في الصفحة الأولى */
+        .content-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            flex: 1;
+        }
+
+        .signature-wrapper {
+            margin-top: auto;
+        }
+
+        /* عرض الرقم التسلسلي الحالي */
+        .serial-display {
+            background: rgba(255,255,255,0.1);
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin-top: 8px;
+            font-size: 10pt;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .serial-display span {
+            font-weight: bold;
+            color: #c19a53;
+        }
+
+        /* زر اللغة */
+        .language-switcher {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+        }
+
+        @media print {
+            .language-switcher {
+                display: none !important;
+            }
+        }
+
+        /* تبويب الأقسام */
+        .department-tabs {
+            display: flex;
+            overflow-x: auto;
+            margin-bottom: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 5px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .department-tab {
+            padding: 8px 15px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 0 5px;
+            font-weight: bold;
+            transition: all 0.3s;
+            white-space: nowrap;
+            border: 1px solid transparent;
+        }
+
+        .department-tab:hover {
+            background: #edf2f7;
+        }
+
+        .department-tab.active {
+            background: linear-gradient(135deg, #1a365d, #2c5282);
+            color: white;
+            border-color: #1a365d;
+        }
+
+        /* علامة تبويب القسم الحالي */
+        .current-department-badge {
+            background: #c19a53;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 9pt;
+            margin-left: 10px;
+            display: inline-block;
+        }
+
+        /* عناصر التحكم الخاصة بالأقسام */
+        .department-control {
+            background: #f8fafc;
+            padding: 8px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            border-right: 3px solid #c19a53;
+        }
+
+        /* تصميم خاص للطباعة - جميع الأقسام في صفحة واحدة */
+        .all-evaluations {
+            display: block;
+        }
+
+        .print-visible {
+            display: none;
+        }
+
+        @media print {
+            .print-visible {
+                display: block !important;
+            }
+
+            .department-control {
+                display: none !important;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- نظام الإشعارات المتقدم -->
+    <div id="notifications-container"></div>
+
+    <!-- نافذة تأكيد تصفير الرقم التسلسلي -->
+    <div class="confirmation-modal" id="resetConfirmationModal">
+        <div class="confirmation-content">
+            <h3><i class="fas fa-exclamation-triangle"></i> <span id="modal-title">تأكيد تصفير الرقم التسلسلي</span></h3>
+            <p id="modal-message">هل أنت متأكد من أنك تريد تصفير الرقم التسلسلي؟</p>
+            <p><span id="modal-detail">سيتم إعادة ضبط العداد إلى الرقم:</span> <strong>VAL-000001</strong></p>
+            <div class="confirmation-buttons">
+                <button class="btn-confirm" onclick="confirmResetSerial()">
+                    <i class="fas fa-check"></i> <span id="modal-confirm">نعم، تصفير</span>
+                </button>
+                <button class="btn-cancel" onclick="closeResetConfirmation()">
+                    <i class="fas fa-times"></i> <span id="modal-cancel">إلغاء</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- زر تغيير اللغة -->
+    <div class="language-switcher no-print">
+        <button class="btn btn-language" id="language-toggle" onclick="toggleLanguage()">
+            <i class="fas fa-language"></i> <span id="language-text">English</span>
+        </button>
+    </div>
+
+    <!-- لوحة التحكم -->
+    <div class="control-panel no-print">
+        <div style="text-align: center; margin-bottom: 10px;">
+            <h2 style="margin: 0 0 5px 0; font-family: 'Times New Roman', serif; font-size: 14pt;">
+                <i class="fas fa-chart-line"></i> <span id="system-title">نظام التقييم السريع الموحد</span>
+            </h2>
+            <h4 style="margin: 0; font-weight: normal; opacity: 0.9; font-family: 'Times New Roman', serif; font-size: 11pt;">
+                <span id="company-name">شركة فالنسيا للرخام والحجر الطبيعي</span>
+            </h4>
+        </div>
+
+        <!-- تبويب الأقسام -->
+        <div class="department-tabs no-print" id="departmentTabs">
+            <div class="department-tab active" onclick="switchDepartment('sales')" data-department="sales">
+                <i class="fas fa-shopping-cart"></i> <span id="tab-sales">المبيعات</span>
+            </div>
+            <div class="department-tab" onclick="switchDepartment('warehouse')" data-department="warehouse">
+                <i class="fas fa-boxes"></i> <span id="tab-warehouse">المستودعات</span>
+            </div>
+            <div class="department-tab" onclick="switchDepartment('projects')" data-department="projects">
+                <i class="fas fa-project-diagram"></i> <span id="tab-projects">المشاريع</span>
+            </div>
+            <div class="department-tab" onclick="switchDepartment('design')" data-department="design">
+                <i class="fas fa-pencil-ruler"></i> <span id="tab-design">التصميم</span>
+            </div>
+            <div class="department-tab" onclick="switchDepartment('equipment')" data-department="equipment">
+                <i class="fas fa-tools"></i> <span id="tab-equipment">الآليات</span>
+            </div>
+            <div class="department-tab" onclick="switchDepartment('marketing')" data-department="marketing">
+                <i class="fas fa-hashtag"></i> <span id="tab-marketing">التسويق الإلكتروني</span>
+            </div>
+            <div class="department-tab" onclick="switchDepartment('accounting')" data-department="accounting">
+                <i class="fas fa-calculator"></i> <span id="tab-accounting">المالية</span>
+            </div>
+            <div class="department-tab" onclick="switchDepartment('marble')" data-department="marble">
+                <i class="fas fa-gem"></i> <span id="tab-marble">الرخام</span>
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <button class="btn btn-print" onclick="prepareAndPrint()">
+                <i class="fas fa-paper-plane"></i> <span id="btn-print-text">طباعة وإرسال تلقائي</span>
+            </button>
+            <button class="btn btn-reset" onclick="showResetConfirmation()">
+                <i class="fas fa-redo"></i> <span id="btn-reset-text">تصفير الرقم التسلسلي</span>
+            </button>
+            <button class="btn" onclick="exportEvaluationData()" style="background: linear-gradient(135deg, #805ad5, #6b46c1); color: white; border: 1px solid #6b46c1;">
+                <i class="fas fa-download"></i> <span>تصدير البيانات</span>
+            </button>
+            <button class="btn" onclick="resetForm()" style="background: linear-gradient(135deg, #ed8936, #dd6b20); color: white; border: 1px solid #dd6b20;">
+                <i class="fas fa-broom"></i> <span>تفريغ النموذج</span>
+            </button>
+        </div>
+
+        <div class="serial-display">
+            <div><span id="current-serial-label">الرقم التسلسلي الحالي:</span></div>
+            <div><span id="current-serial-display">VAL-000001</span></div>
+        </div>
+
+        <div class="auto-calculation-note">
+            <i class="fas fa-info-circle"></i> <span id="auto-calc-note">يتم حساب النتائج تلقائياً عند اختيار التقييمات</span>
+            <div class="loading-spinner" id="calculation-spinner"></div>
+        </div>
+
+        <!-- قسم المساعدة -->
+        <div class="help-section no-print">
+            <h4 style="margin: 0 0 8px 0; color: #1a365d;">
+                <i class="fas fa-question-circle"></i> <span>التعليمات السريعة</span>
+            </h4>
+            <div style="font-size: 9pt; color: #4a5568;">
+                <div style="margin-bottom: 4px;">• اختر القسم المناسب من التبويبات</div>
+                <div style="margin-bottom: 4px;">• اختر التقييم (من 1-5) لكل معيار بالنقر على الرقم</div>
+                <div style="margin-bottom: 4px;">• يمكنك إضافة ملاحظات خاصة لكل معيار</div>
+                <div>• النتائج تحسب تلقائياً - المجموع النهائي من 50 نقطة</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نموذج المحتوى -->
+    <div id="evaluationForm" class="content-container">
+        <!-- الترويسة -->
+        <div class="header">
+            <h1 id="report-title">النموذج الموحد للتقييم السريع (50 نقطة)</h1>
+            <h3 id="company-header">شركة فالنسيا للرخام والحجر الطبيعي</h3>
+            <h3>
+                <span id="date-label">التاريخ:</span> <span id="current-date" class="print-value"></span> |
+                <span id="serial-label">الرقم التسلسلي:</span> <span id="serial-number" class="print-value">VAL-000001</span>
+                <span class="current-department-badge" id="department-badge">المبيعات</span>
+            </h3>
+        </div>
+
+        <div class="main-content all-evaluations">
+            <!-- معلومات الموظف -->
+            <table style="margin-bottom: 8px;">
+                <tr>
+                    <td width="15%"><strong id="emp-name-label">اسم الموظف:</strong></td>
+                    <td width="35%"><input type="text" style="width:100%;" id="emp-name" placeholder="الاسم الكامل" class="print-field"></td>
+                    <td width="15%"><strong id="emp-id-label">رقم الموظف:</strong></td>
+                    <td width="35%"><input type="text" style="width:100%;" id="emp-id" placeholder="رقم التعريف" class="print-field"></td>
+                </tr>
+                <tr>
+                    <td><strong id="job-label">الوظيفة:</strong></td>
+                    <td><input type="text" style="width:100%;" id="emp-job" placeholder="المسمى الوظيفي" class="print-field"></td>
+                    <td><strong id="supervisor-label">المشرف المباشر:</strong></td>
+                    <td>
+                        <select style="width:100%;" id="supervisor" class="print-field">
+                            <option value="">اختر المشرف</option>
+                            <option value="مهند نيازي السلق">مهند نيازي السلق - المحاسبة</option>
+                            <option value="ركان إياد زيعز">ركان - المبيعات</option>
+                            <option value="ماجد يوسف ابراهيم">ماجد - ادارة مستودعات</option>
+                            <option value="محمد علي">محمدعلي - ابوظبي</option>
+                            <option value="ركان إياد زيعز">ركان - النقليات</option>
+                            <option value="احمد ماهر عبدالرازق">احمد ماهر - الاليات</option>
+                            <option value="مأمون احمد حجازي">أبو يزن - المشاريع</option>
+                            <option value="أنس محمد السرداني">ابو وائل - الرخام</option>
+                            <option value="مكتب مصر">رمضان - التصميم</option>
+                            <option value="أمين احمد حجازي">ابو وديع - السوشيال ميديا</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong id="department-label">القسم:</strong></td>
+                    <td>
+                        <select style="width:100%;" id="department" class="print-field" onchange="updateDepartmentSelection()">
+                            <option value="">اختر القسم</option>
+                            <option value="المبيعات">المبيعات</option>
+                            <option value="المستودعات">المستودعات</option>
+                            <option value="المشاريع">المشاريع</option>
+                            <option value="التصميم">التصميم</option>
+                            <option value="الآليات">الآليات</option>
+                            <option value="التسويق الإلكتروني">التسويق الإلكتروني</option>
+                            <option value="المالية">المالية/المحاسبة</option>
+                            <option value="الرخام">الرخام</option>
+                        </select>
+                    </td>
+                    <td><strong id="eval-period-label">فترة التقييم:</strong></td>
+                    <td>
+                        <select style="width:100%;" id="eval-period" class="print-field">
+                            <option value="اسبوعي">أسبوعي</option>
+                            <option value="شهري">شهري</option>
+                            <option value="ربع سنوي">ربع سنوي</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- ملخص النتائج -->
+            <div class="result-summary no-print">
+                <div style="display: flex; justify-content: space-around; text-align: center;">
+                    <div>
+                        <div style="font-size: 9pt; color: #4a5568;" id="summary-general">المعايير العامة</div>
+                        <div style="font-size: 14pt; font-weight: bold; color: #1a365d;" id="summary-general-score">0/15</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 9pt; color: #4a5568;" id="summary-special">المعايير الخاصة</div>
+                        <div style="font-size: 14pt; font-weight: bold; color: #2c5282;" id="summary-special-score">0/35</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 9pt; color: #4a5568;" id="summary-total">المجموع النهائي</div>
+                        <div style="font-size: 14pt; font-weight: bold; color: #38a169;" id="summary-total-score">0/50</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 9pt; color: #4a5568;" id="summary-percentage">النسبة المئوية</div>
+                        <div style="font-size: 14pt; font-weight: bold; color: #c19a53;" id="summary-percentage-score">0%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================= -->
+            <!-- قسم المبيعات -->
+            <!-- ============================================= -->
+            <div id="sales-evaluation" class="quick-evaluation-section sales-criteria">
+                <!-- المعايير العامة المشتركة (15 نقطة) -->
+                <div class="criteria-section">
+                    <div class="section-title">أولاً: المعايير العامة المشتركة (15 نقطة)</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="35%" id="criteria-header">المعيار</th>
+                                <th width="15%" id="description-header">الوصف</th>
+                                <th width="20%" id="rating-header">التقييم (من 1-5)</th>
+                                <th width="25%" id="notes-header">الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="general-criteria-sales">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#e8f4fd; font-weight:bold;">
+                                <td colspan="3">المجموع الجزئي - المعايير العامة:</td>
+                                <td id="general-total-sales">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- المعايير الخاصة بالمبيعات (35 نقطة) -->
+                <div class="criteria-section">
+                    <div class="section-title">ثانياً: معايير خاصة بقسم المبيعات (35 نقطة)</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="30%">المعيار</th>
+                                <th width="15%">الوصف التفصيلي</th>
+                                <th width="10%">الوزن</th>
+                                <th width="20%">التقييم (من 1-5)</th>
+                                <th width="20%">الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="special-criteria-sales">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#f0f9f0; font-weight:bold;">
+                                <td colspan="3">المجموع الجزئي - المعايير الخاصة:</td>
+                                <td id="special-weight-sales">35</td>
+                                <td id="special-total-sales">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- النتيجة النهائية -->
+                <div class="criteria-section">
+                    <table>
+                        <tr style="background:#1a365d; color:white; font-weight:bold;">
+                            <td colspan="3">النتيجة النهائية للتقييم:</td>
+                            <td id="total-weight-sales">50</td>
+                            <td id="final-total-sales">0</td>
+                            <td id="final-percentage-sales">0%</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ============================================= -->
+            <!-- قسم المستودعات -->
+            <!-- ============================================= -->
+            <div id="warehouse-evaluation" class="quick-evaluation-section warehouse-criteria" style="display:none;">
+                <!-- المعايير العامة المشتركة (15 نقطة) -->
+                <div class="criteria-section">
+                    <div class="section-title">أولاً: المعايير العامة المشتركة (15 نقطة)</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="35%">المعيار</th>
+                                <th width="15%">الوصف</th>
+                                <th width="20%">التقييم (من 1-5)</th>
+                                <th width="25%">الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="general-criteria-warehouse">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#e8f4fd; font-weight:bold;">
+                                <td colspan="3">المجموع الجزئي - المعايير العامة:</td>
+                                <td id="general-total-warehouse">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- المعايير الخاصة بالمستودعات (35 نقطة) -->
+                <div class="criteria-section">
+                    <div class="section-title">ثانياً: معايير خاصة بقسم المستودعات (35 نقطة)</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="30%">المعيار</th>
+                                <th width="15%">الوصف التفصيلي</th>
+                                <th width="10%">الوزن</th>
+                                <th width="20%">التقييم (من 1-5)</th>
+                                <th width="20%">الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="special-criteria-warehouse">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#f0f9f0; font-weight:bold;">
+                                <td colspan="3">المجموع الجزئي - المعايير الخاصة:</td>
+                                <td id="special-weight-warehouse">35</td>
+                                <td id="special-total-warehouse">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- النتيجة النهائية -->
+                <div class="criteria-section">
+                    <table>
+                        <tr style="background:#1a365d; color:white; font-weight:bold;">
+                            <td colspan="3">النتيجة النهائية للتقييم:</td>
+                            <td id="total-weight-warehouse">50</td>
+                            <td id="final-total-warehouse">0</td>
+                            <td id="final-percentage-warehouse">0%</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ============================================= -->
+            <!-- قسم المشاريع -->
+            <!-- ============================================= -->
+            <div id="projects-evaluation" class="quick-evaluation-section projects-criteria" style="display:none;">
+                <!-- المعايير العامة المشتركة (15 نقطة) -->
+                <div class="criteria-section">
+                    <div class="section-title">أولاً: المعايير العامة المشتركة (15 نقطة)</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="35%">المعيار</th>
+                                <th width="15%">الوصف</th>
+                                <th width="20%">التقييم (من 1-5)</th>
+                                <th width="25%">الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="general-criteria-projects">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#e8f4fd; font-weight:bold;">
+                                <td colspan="3">المجموع الجزئي - المعايير العامة:</td>
+                                <td id="general-total-projects">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- المعايير الخاصة بالمشاريع (35 نقطة) -->
+                <div class="criteria-section">
+                    <div class="section-title">ثانياً: معايير خاصة بقسم المشاريع (35 نقطة)</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="30%">المعيار</th>
+                                <th width="15%">الوصف التفصيلي</th>
+                                <th width="10%">الوزن</th>
+                                <th width="20%">التقييم (من 1-5)</th>
+                                <th width="20%">الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="special-criteria-projects">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#f0f9f0; font-weight:bold;">
+                                <td colspan="3">المجموع الجزئي - المعايير الخاصة:</td>
+                                <td id="special-weight-projects">35</td>
+                                <td id="special-total-projects">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- النتيجة النهائية -->
+                <div class="criteria-section">
+                    <table>
+                        <tr style="background:#1a365d; color:white; font-weight:bold;">
+                            <td colspan="3">النتيجة النهائية للتقييم:</td>
+                            <td id="total-weight-projects">50</td>
+                            <td id="final-total-projects">0</td>
+                            <td id="final-percentage-projects">0%</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ============================================= -->
+            <!-- قسم التصميم -->
+            <!-- ============================================= -->
+            <div id="design-evaluation" class="quick-evaluation-section design-criteria" style="display:none;">
+                <!-- المعايير العامة المشتركة (15 نقطة) -->
+                <div class="criteria-section">
+                    <div class="section-title">أولاً: المعايير العامة المشتركة (15 نقطة)</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="35%">المعيار</th>
+                                <th width="15%">الوصف</th>
+                                <th width="20%">التقييم (من 1-5)</th>
+                                <th width="25%">الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="general-criteria-design">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#e8f4fd; font-weight:bold;">
+                                <td colspan="3">المجموع الجزئي - المعايير العامة:</td>
+                                <td id="general-total-design">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- المعايير الخاصة بالتصميم (35 نقطة) -->
+                <div class="criteria-section">
+                    <div class="section-title">ثانياً: معايير خاصة بقسم التصميم (35 نقطة)</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="30%">المعيار</th>
+                                <th width="15%">الوصف التفصيلي</th>
+                                <th width="10%">الوزن</th>
+                                <th width="20%">التقييم (من 1-5)</th>
+                                <th width="20%">الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="special-criteria-design">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#f0f9f0; font-weight:bold;">
+                                <td colspan="3">المجموع الجزئي - المعايير الخاصة:</td>
+                                <td id="special-weight-design">35</td>
+                                <td id="special-total-design">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- النتيجة النهائية -->
+                <div class="criteria-section">
+                    <table>
+                        <tr style="background:#1a365d; color:white; font-weight:bold;">
+                            <td colspan="3">النتيجة النهائية للتقييم:</td>
+                            <td id="total-weight-design">50</td>
+                            <td id="final-total-design">0</td>
+                            <td id="final-percentage-design">0%</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ============================================= -->
+            <!-- قسم الآليات -->
+            <!-- ============================================= -->
+            <div id="equipment-evaluation" class="quick-evaluation-section equipment-criteria" style="display:none;">
+                <!-- المعايير العامة المشتركة (15 نقطة) -->
+                <div class="criteria-section">
+                    <div class="section-title">أولاً: المعايير العامة المشتركة (15 نقطة)</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="35%">المعيار</th>
+                                <th width="15%">الوصف</th>
+                                <th width="20%">التقييم (من 1-5)</th>
+                                <th width="25%">الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="general-criteria-equipment">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#e8f4fd; font-weight:bold;">
+                                <td colspan="3">المجموع الجزئي - المعايير العامة:</td>
+                                <td id="general-total-equipment">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- المعايير الخاصة بالآليات (35 نقطة) -->
+                <div class="criteria-section">
+                    <div class="section-title">ثانياً: معايير خاصة بقسم الآليات (35 نقطة)</div>
+                    <div class="department-control no-print">
+                        <strong>اختر نوع السائق:</strong>
+                        <select id="driver-type" style="margin-right:15px; padding:4px 8px; border:1px solid #cbd5e0; border-radius:3px;" onchange="updateEquipmentCriteria()">
+                            <option value="cars">السيارات العامة والشحن</option>
+                            <option value="forklift">الفوركلفت</option>
+                        </select>
+                    </div>
+
+                    <table id="cars-table">
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="30%">المعيار</th>
+                                <th width="15%">الوصف التفصيلي</th>
+                                <th width="10%">الوزن</th>
+                                <th width="20%">التقييم (من 1-5)</th>
+                                <th width="20%">الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="special-criteria-equipment-cars">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#f0f9f0; font-weight:bold;">
+                                <td colspan="3">المجموع الجزئي - المعايير الخاصة:</td>
+                                <td id="special-weight-equipment-cars">35</td>
+                                <td id="special-total-equipment-cars">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <table id="forklift-table" style="display:none;">
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="30%">المعيار</th>
+                                <th width="15%">الوصف التفصيلي</th>
+                                <th width="10%">الوزن</th>
+                                <th width="20%">التقييم (من 1-5)</th>
+                                <th width="20%">الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="special-criteria-equipment-forklift">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#f0f9f0; font-weight:bold;">
+                                <td colspan="3">المجموع الجزئي - المعايير الخاصة:</td>
+                                <td id="special-weight-equipment-forklift">35</td>
+                                <td id="special-total-equipment-forklift">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- النتيجة النهائية -->
+                <div class="criteria-section">
+                    <table>
+                        <tr style="background:#1a365d; color:white; font-weight:bold;">
+                            <td colspan="3">النتيجة النهائية للتقييم:</td>
+                            <td id="total-weight-equipment">50</td>
+                            <td id="final-total-equipment">0</td>
+                            <td id="final-percentage-equipment">0%</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ============================================= -->
+            <!-- قسم التسويق الإلكتروني -->
+            <!-- ============================================= -->
+            <div id="marketing-evaluation" class="quick-evaluation-section marketing-criteria" style="display:none;">
+                <!-- المعايير العامة المشتركة (15 نقطة) -->
+                <div class="criteria-section">
+                    <div class="section-title">أولاً: المعايير العامة المشتركة (15 نقطة)</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="35%">المعيار</th>
+                                <th width="15%">الوصف</th>
+                                <th width="20%">التقييم (من 1-5)</th>
+                                <th width="25%">الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="general-criteria-marketing">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#e8f4fd; font-weight:bold;">
+                                <td colspan="3">المجموع الجزئي - المعايير العامة:</td>
+                                <td id="general-total-marketing">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- المعايير الخاصة بالتسويق الإلكتروني (35 نقطة) -->
+                <div class="criteria-section">
+                    <div class="section-title">ثانياً: معايير خاصة بقسم التسويق الإلكتروني (35 نقطة)</div>
+                    <div class="department-control no-print">
+                        <strong>اختر نوع الموظف:</strong>
+                        <select id="marketing-role" style="margin-right:15px; padding:4px 8px; border:1px solid #cbd5e0; border-radius:3px;" onchange="updateMarketingCriteria()">
+                            <option value="photographer">المصور (عمار فادي عوض)</option>
+                            <option value="editor">المونتاج (سامر جنيد)</option>
+                            <option value="designer">مصمم الإعلان والناشر (رباح، منه، رانيا)</option>
+                        </select>
+                    </div>
+
+                    <table id="photographer-table">
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="30%">المعيار</th>
+                                <th width="15%">الوصف التفصيلي</th>
+                                <th width="10%">الوزن</th>
+                                <th width="20%">التقييم (من 1-5)</th>
+                                <th width="20%">الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="special-criteria-marketing-photographer">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#f0f9f0; font-weight:bold;">
+                                <td colspan="3">المجموع الجزئي - المعايير الخاصة:</td>
+                                <td id="special-weight-marketing-photographer">35</td>
+                                <td id="special-total-marketing-photographer">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <table id="editor-table" style="display:none;">
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="30%">المعيار</th>
+                                <th width="15%">الوصف التفصيلي</th>
+                                <th width="10%">الوزن</th>
+                                <th width="20%">التقييم (من 1-5)</th>
+                                <th width="20%">الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="special-criteria-marketing-editor">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#f0f9f0; font-weight:bold;">
+                                <td colspan="3">المجموع الجزئي - المعايير الخاصة:</td>
+                                <td id="special-weight-marketing-editor">35</td>
+                                <td id="special-total-marketing-editor">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <table id="designer-table" style="display:none;">
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="30%">المعيار</th>
+                                <th width="15%">الوصف التفصيلي</th>
+                                <th width="10%">الوزن</th>
+                                <th width="20%">التقييم (من 1-5)</th>
+                                <th width="20%">الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="special-criteria-marketing-designer">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#f0f9f0; font-weight:bold;">
+                                <td colspan="3">المجموع الجزئي - المعايير الخاصة:</td>
+                                <td id="special-weight-marketing-designer">35</td>
+                                <td id="special-total-marketing-designer">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- النتيجة النهائية -->
+                <div class="criteria-section">
+                    <table>
+                        <tr style="background:#1a365d; color:white; font-weight:bold;">
+                            <td colspan="3">النتيجة النهائية للتقييم:</td>
+                            <td id="total-weight-marketing">50</td>
+                            <td id="final-total-marketing">0</td>
+                            <td id="final-percentage-marketing">0%</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ============================================= -->
+            <!-- قسم المالية -->
+            <!-- ============================================= -->
+            <div id="accounting-evaluation" class="quick-evaluation-section accounting-criteria" style="display:none;">
+                <!-- المعايير العامة المشتركة (15 نقطة) -->
+                <div class="criteria-section">
+                    <div class="section-title">أولاً: المعايير العامة المشتركة (15 نقطة)</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="35%">المعيار</th>
+                                <th width="15%">الوصف</th>
+                                <th width="20%">التقييم (من 1-5)</th>
+                                <th width="25%">الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="general-criteria-accounting">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#e8f4fd; font-weight:bold;">
+                                <td colspan="3">المجموع الجزئي - المعايير العامة:</td>
+                                <td id="general-total-accounting">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- المعايير الخاصة بالمالية (35 نقطة) -->
+                <div class="criteria-section">
+                    <div class="section-title">ثانياً: معايير خاصة بقسم المالية/المحاسبة (35 نقطة)</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="30%">المعيار</th>
+                                <th width="15%">الوصف التفصيلي</th>
+                                <th width="10%">الوزن</th>
+                                <th width="20%">التقييم (من 1-5)</th>
+                                <th width="20%">الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="special-criteria-accounting">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#f0f9f0; font-weight:bold;">
+                                <td colspan="3">المجموع الجزئي - المعايير الخاصة:</td>
+                                <td id="special-weight-accounting">35</td>
+                                <td id="special-total-accounting">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- النتيجة النهائية -->
+                <div class="criteria-section">
+                    <table>
+                        <tr style="background:#1a365d; color:white; font-weight:bold;">
+                            <td colspan="3">النتيجة النهائية للتقييم:</td>
+                            <td id="total-weight-accounting">50</td>
+                            <td id="final-total-accounting">0</td>
+                            <td id="final-percentage-accounting">0%</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ============================================= -->
+            <!-- قسم الرخام -->
+            <!-- ============================================= -->
+            <div id="marble-evaluation" class="quick-evaluation-section marble-criteria" style="display:none;">
+                <!-- المعايير العامة المشتركة (15 نقطة) -->
+                <div class="criteria-section">
+                    <div class="section-title">أولاً: المعايير العامة المشتركة (15 نقطة)</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="35%">المعيار</th>
+                                <th width="15%">الوصف</th>
+                                <th width="20%">التقييم (من 1-5)</th>
+                                <th width="25%">الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="general-criteria-marble">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#e8f4fd; font-weight:bold;">
+                                <td colspan="3">المجموع الجزئي - المعايير العامة:</td>
+                                <td id="general-total-marble">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- المعايير الخاصة بالرخام (35 نقطة) -->
+                <div class="criteria-section">
+                    <div class="section-title">ثانياً: معايير خاصة بقسم الرخام (35 نقطة)</div>
+                    <div class="department-control no-print">
+                        <strong>اختر نوع العامل:</strong>
+                        <select id="marble-role" style="margin-right:15px; padding:4px 8px; border:1px solid #cbd5e0; border-radius:3px;" onchange="updateMarbleCriteria()">
+                            <option value="projects">عمال المشاريع</option>
+                            <option value="cutting">عمال القص</option>
+                            <option value="installation">عمال التركيب</option>
+                            <option value="finishing">عمال التشطيب</option>
+                        </select>
+                    </div>
+
+                    <table id="projects-table">
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="30%">المعيار</th>
+                                <th width="15%">الوصف التفصيلي</th>
+                                <th width="10%">الوزن</th>
+                                <th width="20%">التقييم (من 1-5)</th>
+                                <th width="20%">الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="special-criteria-marble-projects">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#f0f9f0; font-weight:bold;">
+                                <td colspan="3">المجموع الجزئي - المعايير الخاصة:</td>
+                                <td id="special-weight-marble-projects">35</td>
+                                <td id="special-total-marble-projects">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <table id="cutting-table" style="display:none;">
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="30%">المعيار</th>
+                                <th width="15%">الوصف التفصيلي</th>
+                                <th width="10%">الوزن</th>
+                                <th width="20%">التقييم (من 1-5)</th>
+                                <th width="20%">الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="special-criteria-marble-cutting">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#f0f9f0; font-weight:bold;">
+                                <td colspan="3">المجموع الجزئي - المعايير الخاصة:</td>
+                                <td id="special-weight-marble-cutting">35</td>
+                                <td id="special-total-marble-cutting">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <table id="installation-table" style="display:none;">
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="30%">المعيار</th>
+                                <th width="15%">الوصف التفصيلي</th>
+                                <th width="10%">الوزن</th>
+                                <th width="20%">التقييم (من 1-5)</th>
+                                <th width="20%">الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="special-criteria-marble-installation">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#f0f9f0; font-weight:bold;">
+                                <td colspan="3">المجموع الجزئي - المعايير الخاصة:</td>
+                                <td id="special-weight-marble-installation">35</td>
+                                <td id="special-total-marble-installation">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <table id="finishing-table" style="display:none;">
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="30%">المعيار</th>
+                                <th width="15%">الوصف التفصيلي</th>
+                                <th width="10%">الوزن</th>
+                                <th width="20%">التقييم (من 1-5)</th>
+                                <th width="20%">الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="special-criteria-marble-finishing">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#f0f9f0; font-weight:bold;">
+                                <td colspan="3">المجموع الجزئي - المعايير الخاصة:</td>
+                                <td id="special-weight-marble-finishing">35</td>
+                                <td id="special-total-marble-finishing">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- النتيجة النهائية -->
+                <div class="criteria-section">
+                    <table>
+                        <tr style="background:#1a365d; color:white; font-weight:bold;">
+                            <td colspan="3">النتيجة النهائية للتقييم:</td>
+                            <td id="total-weight-marble">50</td>
+                            <td id="final-total-marble">0</td>
+                            <td id="final-percentage-marble">0%</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- الملاحظات والتوصيات -->
+            <div class="criteria-section prevent-page-break">
+                <div class="section-title" id="notes-title">الملاحظات والتوصيات العامة</div>
+                <table style="margin-bottom:8px;">
+                    <tr class="notes-row">
+                        <td><strong id="strengths-label">نقاط القوة:</strong></td>
+                        <td><textarea class="note-field" id="strengths" placeholder="أبرز الإنجازات ونقاط التميز..." class="print-field"></textarea></td>
+                    </tr>
+                    <tr class="notes-row">
+                        <td><strong id="improvements-label">مجالات التحسين:</strong></td>
+                        <td><textarea class="note-field" id="improvements" placeholder="المجالات التي تحتاج إلى تطوير..." class="print-field"></textarea></td>
+                    </tr>
+                    <tr class="notes-row">
+                        <td><strong id="plan-label">خطة التطوير:</strong></td>
+                        <td><textarea class="note-field" id="development-plan" placeholder="الخطوات المقترحة للتطوير..." class="print-field"></textarea></td>
+                    </tr>
+                    <tr class="notes-row">
+                        <td><strong id="recommendations-label">توصيات المشرف:</strong></td>
+                        <td><textarea class="note-field" id="supervisor-notes" placeholder="ملاحظات وتوصيات المشرف..." class="print-field"></textarea></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- التواقيع في نهاية الصفحة -->
+        <div class="signature-wrapper">
+            <div class="signature-section">
+                <div style="text-align: center; margin-bottom: 10px; font-weight: bold; font-size: 12pt; color: #1a365d;" id="signatures-title">
+                    تواقيع المسؤولين
+                </div>
+                <table style="border: none;">
+                    <tr>
+                        <td style="border: none; text-align: center; width: 33%;">
+                            <div class="signature-box">
+                                <strong id="supervisor-signature-label">توقيع المشرف المباشر</strong>
+                                <div class="signature-line"></div>
+                                <div style="margin-top: 5px; font-size:9pt;"><span id="name-label">الاسم:</span> ________________</div>
+                                <div style="font-size:9pt;"><span id="date-label-2">التاريخ:</span> ________________</div>
+                            </div>
+                        </td>
+                        <td style="border: none; text-align: center; width: 33%;">
+                            <div class="signature-box">
+                                <strong id="manager-signature-label">توقيع مدير القسم</strong>
+                                <div class="signature-line"></div>
+                                <div style="margin-top: 5px; font-size:9pt;"><span id="name-label-2">الاسم:</span> ________________</div>
+                                <div style="font-size:9pt;"><span id="date-label-3">التاريخ:</span> ________________</div>
+                            </div>
+                        </td>
+                        <td style="border: none; text-align: center; width: 33%;">
+                            <div class="signature-box">
+                                <strong id="hr-stamp-label">ختم الموارد البشرية</strong>
+                                <div style="margin-top: 8px; font-size: 22pt; color: #c19a53;">
+                                    <i class="fas fa-stamp"></i>
+                                </div>
+                                <div style="margin-top: 8px; font-size:9pt;"><span id="name-label-3">الاسم:</span> ________________</div>
+                                <div style="font-size:9pt;"><span id="date-label-4">التاريخ:</span> ________________</div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- معلومات النظام في الطباعة -->
+            <div style="text-align: center; margin-top: 10px; font-size: 7pt; color: #718096; padding-top: 4px; display: none;" class="print-only">
+                <div id="print-footer">تم إنشاء هذا التقرير آلياً عبر نظام التقييم السريع الموحد لشركة فالنسيا للرخام</div>
+                <div><span id="print-serial-label">الرقم التسلسلي:</span> <span id="print-serial-number">VAL-000001</span> | <span id="print-date-label">تاريخ الإنشاء:</span> <span id="print-current-date"></span> | <span id="page-label">الصفحة:</span> 1/1</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =============================================
+        // إعدادات النظام
+        // =============================================
+        let currentLanguage = 'ar';
+        let currentDepartment = 'sales';
+        let serialNumberCounter = localStorage.getItem('valenciaQuickEvalCounter') || 1;
+        let autoSaveTimer;
+
+        // =============================================
+        // بيانات المعايير العامة المشتركة (15 نقطة)
+        // =============================================
+        const generalCriteria = [
+            {
+                id: 'general-1',
+                name: { ar: 'الانضباط والالتزام', en: 'Discipline & Commitment' },
+                description: { ar: 'الحضور، النظام، الالتزام بالتعليمات', en: 'Attendance, order, adherence to instructions' }
+            },
+            {
+                id: 'general-2',
+                name: { ar: 'العمل الجماعي والتعاون', en: 'Teamwork & Cooperation' },
+                description: { ar: 'التعاون مع الفريق، المساعدة، التواصل', en: 'Team cooperation, assistance, communication' }
+            },
+            {
+                id: 'general-3',
+                name: { ar: 'الإنتاجية والإنجاز', en: 'Productivity & Achievement' },
+                description: { ar: 'سرعة الإنجاز، إدارة الوقت، إنجاز المهام', en: 'Speed of completion, time management, task accomplishment' }
+            },
+            {
+                id: 'general-4',
+                name: { ar: 'المبادرة والتحسين', en: 'Initiative & Improvement' },
+                description: { ar: 'اقتراح تحسينات، حل مشكلات، مبادرات', en: 'Suggesting improvements, problem solving, initiatives' }
+            }
+        ];
+
+        // =============================================
+        // بيانات المعايير الخاصة بكل قسم (35 نقطة)
+        // =============================================
+        const specialCriteria = {
+            sales: [
+                { id: 'sales-1', name: { ar: 'المظهر والأناقة', en: 'Appearance & Elegance' }, weight: 3, description: { ar: 'اللباس الخارجي وتسريح الشعر والعطر', en: 'External clothing, hairstyle and perfume' } },
+                { id: 'sales-2', name: { ar: 'التعامل مع العميل', en: 'Customer Interaction' }, weight: 4, description: { ar: 'الاحترافية واللباقة في التعامل', en: 'Professionalism and politeness in dealing' } },
+                { id: 'sales-3', name: { ar: 'سرعة الاستجابة', en: 'Response Speed' }, weight: 3, description: { ar: 'الرد السريع على الاستفسارات', en: 'Quick response to inquiries' } },
+                { id: 'sales-4', name: { ar: 'المتابعة والمبيعات', en: 'Follow-up & Sales' }, weight: 5, description: { ar: 'متابعة العملاء القدامى وحل مشاكل ما بعد البيع', en: 'Follow-up with old customers and solving after-sales problems' } },
+                { id: 'sales-5', name: { ar: 'المهارات البيعية', en: 'Sales Skills' }, weight: 5, description: { ar: 'البيع ضمن حدود السعر، تسعير العروض، قبول شب المبيسات', en: 'Selling within price limits, pricing offers, accepting checks' } },
+                { id: 'sales-6', name: { ar: 'المعرفة والمعلومات', en: 'Knowledge & Information' }, weight: 5, description: { ar: 'حفظ المواد والمسميات، معلومات الحجر', en: 'Memorizing materials and names, stone information' } },
+                { id: 'sales-7', name: { ar: 'بيع الأصناف الراكدة', en: 'Selling Stagnant Items' }, weight: 5, description: { ar: 'القدرة على بيع وترويج الأصناف الراكدة', en: 'Ability to sell and promote stagnant items' } },
+                { id: 'sales-8', name: { ar: 'التحصيل والمهام الإدارية', en: 'Collection & Administrative Tasks' }, weight: 5, description: { ar: 'المتابعة المالية، التقارير، الإجراءات الإدارية', en: 'Financial follow-up, reports, administrative procedures' } }
+            ],
+
+            warehouse: [
+                { id: 'warehouse-1', name: { ar: 'توزيع الأوامر', en: 'Order Distribution' }, weight: 5, description: { ar: 'دقة وتنظيم توزيع الأوامر والطلبات', en: 'Accuracy and organization in distributing orders and requests' } },
+                { id: 'warehouse-2', name: { ar: 'النظافة الشخصية', en: 'Personal Hygiene' }, weight: 4, description: { ar: 'نظافة الزي، النظافة العامة (مرتين أسبوعياً)', en: 'Uniform cleanliness, general hygiene (twice weekly)' } },
+                { id: 'warehouse-3', name: { ar: 'المرونة والتكيف', en: 'Flexibility & Adaptation' }, weight: 4, description: { ar: 'قبول مهام جديدة والتكيف معها', en: 'Accepting new tasks and adapting to them' } },
+                { id: 'warehouse-4', name: { ar: 'القوة البدنية', en: 'Physical Strength' }, weight: 3, description: { ar: 'القدرة على حمل وتحميل البضائع', en: 'Ability to carry and load goods' } },
+                { id: 'warehouse-5', name: { ar: 'إصلاح الحجر', en: 'Stone Repair' }, weight: 5, description: { ar: 'إصلاح الحجر المكسور وإعادة تأهيله', en: 'Repairing broken stone and rehabilitating it' } },
+                { id: 'warehouse-6', name: { ar: 'دقة التخزين', en: 'Storage Accuracy' }, weight: 5, description: { ar: 'تنظيم المخزون، دقة الجرد', en: 'Inventory organization, counting accuracy' } },
+                { id: 'warehouse-7', name: { ar: 'سرعة التنفيذ', en: 'Execution Speed' }, weight: 5, description: { ar: 'سرعة إنجاز المهام', en: 'Speed in completing tasks' } },
+                { id: 'warehouse-8', name: { ar: 'السلامة', en: 'Safety' }, weight: 4, description: { ar: 'الالتزام بإجراءات السلامة', en: 'Adherence to safety procedures' } }
+            ],
+
+            projects: [
+                { id: 'projects-1', name: { ar: 'تنفيذ التعليمات', en: 'Instruction Execution' }, weight: 4, description: { ar: 'الدقة في تنفيذ التعليمات', en: 'Accuracy in executing instructions' } },
+                { id: 'projects-2', name: { ar: 'المقاسات والدقة', en: 'Measurements & Accuracy' }, weight: 4, description: { ar: 'دقة المقاسات وشد الخيوط', en: 'Accuracy of measurements and string tension' } },
+                { id: 'projects-3', name: { ar: 'عزل الحجر السيئ', en: 'Isolating Bad Stone' }, weight: 3, description: { ar: 'اكتشاف وعزل الحجر غير الجيد', en: 'Detecting and isolating bad stone' } },
+                { id: 'projects-4', name: { ar: 'الترتيب والتنظيم', en: 'Arrangement & Organization' }, weight: 3, description: { ar: 'ترتيب الحجر والديكورات', en: 'Arranging stone and decorations' } },
+                { id: 'projects-5', name: { ar: 'جودة التشطيب', en: 'Finishing Quality' }, weight: 5, description: { ar: 'دقة وجودة التشطيب النهائي', en: 'Accuracy and quality of final finishing' } },
+                { id: 'projects-6', name: { ar: 'تركيب السقالات', en: 'Scaffolding Installation' }, weight: 3, description: { ar: 'مهارة تركيب السقالات بأمان', en: 'Skill in safely installing scaffolding' } },
+                { id: 'projects-7', name: { ar: 'سرعة التركيب', en: 'Installation Speed' }, weight: 4, description: { ar: 'السرعة مع الحفاظ على الجودة', en: 'Speed while maintaining quality' } },
+                { id: 'projects-8', name: { ar: 'العمل الإضافي', en: 'Overtime Work' }, weight: 4, description: { ar: 'الاستعداد للعمل الإضافي عند الحاجة', en: 'Readiness for overtime work when needed' } },
+                { id: 'projects-9', name: { ar: 'الإنجاز اليومي', en: 'Daily Achievement' }, weight: 5, description: { ar: 'إنجاز المهام اليومية المطلوبة', en: 'Completing required daily tasks' } }
+            ],
+
+            design: [
+                { id: 'design-1', name: { ar: 'دقة الـ3D', en: '3D Accuracy' }, weight: 6, description: { ar: 'دقة وتفاصيل التصميم ثلاثي الأبعاد', en: 'Accuracy and details of 3D design' } },
+                { id: 'design-2', name: { ar: 'سرعة التنفيذ', en: 'Execution Speed' }, weight: 5, description: { ar: 'سرعة تنفيذ عرض السعر والتصاميم', en: 'Speed in executing price offers and designs' } },
+                { id: 'design-3', name: { ar: 'سرعة البديهة', en: 'Quick Wit' }, weight: 4, description: { ar: 'رد الفعل السريع، الحلول الإبداعية', en: 'Quick reaction, creative solutions' } },
+                { id: 'design-4', name: { ar: 'حل المشاكل', en: 'Problem Solving' }, weight: 4, description: { ar: 'القدرة على حل المشكلات التصميمية', en: 'Ability to solve design problems' } },
+                { id: 'design-5', name: { ar: 'دقة الكميات', en: 'Quantity Accuracy' }, weight: 4, description: { ar: 'دقة حساب الكميات والمواد', en: 'Accuracy in calculating quantities and materials' } },
+                { id: 'design-6', name: { ar: 'حفظ المواد والديكورات', en: 'Material & Decor Memory' }, weight: 4, description: { ar: 'معرفة خصائص وتكاليف المواد', en: 'Knowledge of material characteristics and costs' } },
+                { id: 'design-7', name: { ar: 'تسعير العروض', en: 'Offer Pricing' }, weight: 4, description: { ar: 'الدقة في تسعير عروض الأسعار', en: 'Accuracy in pricing offers' } },
+                { id: 'design-8', name: { ar: 'الإبداع والابتكار', en: 'Creativity & Innovation' }, weight: 4, description: { ar: 'التصاميم المبتكرة والحديثة', en: 'Innovative and modern designs' } }
+            ],
+
+            equipment: {
+                cars: [
+                    { id: 'equipment-cars-1', name: { ar: 'المحافظة على السيارة', en: 'Vehicle Maintenance' }, weight: 5, description: { ar: 'العناية بالسيارة وصيانتها', en: 'Vehicle care and maintenance' } },
+                    { id: 'equipment-cars-2', name: { ar: 'النظافة الداخلية والخارجية', en: 'Internal & External Cleanliness' }, weight: 4, description: { ar: 'نظافة السيارة من الداخل والخارج', en: 'Vehicle cleanliness inside and outside' } },
+                    { id: 'equipment-cars-3', name: { ar: 'سرعة إتمام العمل', en: 'Work Completion Speed' }, weight: 5, description: { ar: 'سرعة إنهاء المهام المطلوبة', en: 'Speed in completing required tasks' } },
+                    { id: 'equipment-cars-4', name: { ar: 'الخبرة باستخدام الرافعة', en: 'Crane Experience' }, weight: 4, description: { ar: 'المهارة في استخدام الرافعة', en: 'Skill in using the crane' } },
+                    { id: 'equipment-cars-5', name: { ar: 'الالتزام بالصيانة', en: 'Maintenance Commitment' }, weight: 5, description: { ar: 'الصيانة الدورية، الإبلاغ عن الأعطال', en: 'Periodic maintenance, reporting malfunctions' } },
+                    { id: 'equipment-cars-6', name: { ar: 'الفحص اليومي', en: 'Daily Inspection' }, weight: 4, description: { ar: 'التشييك اليومي على السيارة', en: 'Daily vehicle check' } },
+                    { id: 'equipment-cars-7', name: { ar: 'القيادة الآمنة', en: 'Safe Driving' }, weight: 5, description: { ar: 'تجنب المخالفات، القيادة الدفاعية', en: 'Avoiding violations, defensive driving' } },
+                    { id: 'equipment-cars-8', name: { ar: 'توفير الوقود', en: 'Fuel Saving' }, weight: 3, description: { ar: 'الاقتصاد في استهلاك الوقود', en: 'Fuel consumption economy' } }
+                ],
+                forklift: [
+                    { id: 'equipment-forklift-1', name: { ar: 'خبرة السائق', en: 'Driver Experience' }, weight: 6, description: { ar: 'الخبرة العملية في قيادة الفوركلفت', en: 'Practical experience in forklift driving' } },
+                    { id: 'equipment-forklift-2', name: { ar: 'الصيانة الدورية', en: 'Periodic Maintenance' }, weight: 5, description: { ar: 'الالتزام بجدول الصيانة', en: 'Adherence to maintenance schedule' } },
+                    { id: 'equipment-forklift-3', name: { ar: 'النظافة العامة', en: 'General Cleanliness' }, weight: 4, description: { ar: 'نظافة الفوركلفت والمكان المحيط', en: 'Forklift and surrounding area cleanliness' } },
+                    { id: 'equipment-forklift-4', name: { ar: 'مهارات القيادة', en: 'Driving Skills' }, weight: 5, description: { ar: 'الخبرة في القيادة داخل المستودع', en: 'Experience in driving inside the warehouse' } },
+                    { id: 'equipment-forklift-5', name: { ar: 'التحميل والتنزيل', en: 'Loading & Unloading' }, weight: 6, description: { ar: 'الخبرة في التحميل والتنزيل الآمن', en: 'Experience in safe loading and unloading' } },
+                    { id: 'equipment-forklift-6', name: { ar: 'السلامة', en: 'Safety' }, weight: 5, description: { ar: 'الالتزام بإجراءات السلامة', en: 'Adherence to safety procedures' } },
+                    { id: 'equipment-forklift-7', name: { ar: 'سرعة العمل', en: 'Work Speed' }, weight: 4, description: { ar: 'سرعة إنجاز المهام', en: 'Speed in completing tasks' } }
+                ]
+            },
+
+            marketing: {
+                photographer: [
+                    { id: 'marketing-photographer-1', name: { ar: 'جودة التصوير', en: 'Photography Quality' }, weight: 6, description: { ar: 'وضوح الصور، الإضاءة، الزوايا الإبداعية', en: 'Image clarity, lighting, creative angles' } },
+                    { id: 'marketing-photographer-2', name: { ar: 'التنوع والإبداع', en: 'Diversity & Creativity' }, weight: 5, description: { ar: 'تنوع المحتوى، أفكار تصوير مبتكرة', en: 'Content diversity, innovative photography ideas' } },
+                    { id: 'marketing-photographer-3', name: { ar: 'السرعة في الإنتاج', en: 'Production Speed' }, weight: 4, description: { ar: 'سرعة إنتاج المحتوى المرئي', en: 'Speed in producing visual content' } },
+                    { id: 'marketing-photographer-4', name: { ar: 'التعامل مع المعدات', en: 'Equipment Handling' }, weight: 4, description: { ar: 'العناية بالمعدات، استخدام التقنيات الحديثة', en: 'Equipment care, use of modern technologies' } },
+                    { id: 'marketing-photographer-5', name: { ar: 'التنسيق مع الفريق', en: 'Team Coordination' }, weight: 4, description: { ar: 'التنسيق مع المونتاج والتسويق', en: 'Coordination with editing and marketing' } },
+                    { id: 'marketing-photographer-6', name: { ar: 'التغطية الشاملة', en: 'Comprehensive Coverage' }, weight: 6, description: { ar: 'تغطية جميع الفعاليات والمنتجات المطلوبة', en: 'Covering all required events and products' } },
+                    { id: 'marketing-photographer-7', name: { ar: 'المرونة والتكيف', en: 'Flexibility & Adaptation' }, weight: 6, description: { ar: 'القدرة على التصوير في ظروف مختلفة', en: 'Ability to photograph in different conditions' } }
+                ],
+                editor: [
+                    { id: 'marketing-editor-1', name: { ar: 'جودة المونتاج', en: 'Editing Quality' }, weight: 6, description: { ar: 'احترافية المونتاج، السلاسة، المؤثرات', en: 'Professional editing, smoothness, effects' } },
+                    { id: 'marketing-editor-2', name: { ar: 'سرعة التسليم', en: 'Delivery Speed' }, weight: 5, description: { ar: 'الالتزام بمواعيد تسليم المقاطع', en: 'Commitment to video delivery deadlines' } },
+                    { id: 'marketing-editor-3', name: { ar: 'الإبداع في التحرير', en: 'Creative Editing' }, weight: 5, description: { ar: 'أفكار إبداعية في التحرير والمونتاج', en: 'Creative ideas in editing and montage' } },
+                    { id: 'marketing-editor-4', name: { ar: 'الالتزام بالهوية البصرية', en: 'Visual Identity Commitment' }, weight: 4, description: { ar: 'الحفاظ على هوية الشركة في جميع المقاطع', en: 'Maintaining company identity in all videos' } },
+                    { id: 'marketing-editor-5', name: { ar: 'التعامل مع الملاحظات', en: 'Handling Feedback' }, weight: 4, description: { ar: 'تقبل التعديلات وتنفيذها بسرعة', en: 'Accepting modifications and implementing them quickly' } },
+                    { id: 'marketing-editor-6', name: { ar: 'تنظيم الملفات', en: 'File Organization' }, weight: 4, description: { ar: 'تنظيم وأرشفة الملفات بشكل منظم', en: 'Organizing and archiving files systematically' } },
+                    { id: 'marketing-editor-7', name: { ar: 'استخدام التقنيات الحديثة', en: 'Using Modern Technologies' }, weight: 3, description: { ar: 'استخدام برامج وتقنيات حديثة', en: 'Using modern software and technologies' } },
+                    { id: 'marketing-editor-8', name: { ar: 'إضافة النصوص والمؤثرات', en: 'Adding Texts & Effects' }, weight: 4, description: { ar: 'دقة إضافة النصوص والترجمة والمؤثرات', en: 'Accuracy in adding texts, translation, and effects' } }
+                ],
+                designer: [
+                    { id: 'marketing-designer-1', name: { ar: 'جودة التصميم', en: 'Design Quality' }, weight: 5, description: { ar: 'جودة تصاميم الإعلانات والبوسترات', en: 'Quality of advertisement and poster designs' } },
+                    { id: 'marketing-designer-2', name: { ar: 'التفاعل مع المتابعين', en: 'Interaction with Followers' }, weight: 6, description: { ar: 'الرد على الرسائل والتعليقات بسرعة ومهنية', en: 'Responding to messages and comments quickly and professionally' } },
+                    { id: 'marketing-designer-3', name: { ar: 'جدولة النشر', en: 'Publishing Scheduling' }, weight: 4, description: { ar: 'الالتزام بجدول النشر المحدد', en: 'Commitment to the specified publishing schedule' } },
+                    { id: 'marketing-designer-4', name: { ar: 'تحليل الأداء', en: 'Performance Analysis' }, weight: 5, description: { ar: 'متابعة وتحليل إحصائيات الصفحات', en: 'Following up and analyzing page statistics' } },
+                    { id: 'marketing-designer-5', name: { ar: 'إدارة الحملات الإعلانية', en: 'Advertising Campaign Management' }, weight: 5, description: { ar: 'فعالية الحملات الإعلانية المدفوعة', en: 'Effectiveness of paid advertising campaigns' } },
+                    { id: 'marketing-designer-6', name: { ar: 'المحتوى الإبداعي', en: 'Creative Content' }, weight: 5, description: { ar: 'إنتاج محتوى جذاب وخلاق', en: 'Producing attractive and creative content' } },
+                    { id: 'marketing-designer-7', name: { ar: 'المتابعة والتقارير', en: 'Follow-up & Reports' }, weight: 5, description: { ar: 'إعداد تقارير أداء دورية', en: 'Preparing periodic performance reports' } }
+                ]
+            },
+
+            accounting: [
+                { id: 'accounting-1', name: { ar: 'الدقة المحاسبية', en: 'Accounting Accuracy' }, weight: 8, description: { ar: 'دقة إدخال البيانات، الالتزام بالمعايير، اكتشاف الأخطاء', en: 'Data entry accuracy, compliance with standards, error detection' } },
+                { id: 'accounting-2', name: { ar: 'الالتزام بالمواعيد', en: 'Timeliness Commitment' }, weight: 7, description: { ar: 'تسليم التقارير في مواعيدها، إنجاز المهام المالية، دفع الفواتير والرواتب', en: 'Delivering reports on time, completing financial tasks, paying bills and salaries' } },
+                { id: 'accounting-3', name: { ar: 'السرية والأمانة', en: 'Confidentiality & Integrity' }, weight: 6, description: { ar: 'الحفاظ على سرية المعلومات، الأمانة في التعامل، الإبلاغ عن مخالفات', en: 'Maintaining information confidentiality, integrity in dealing, reporting violations' } },
+                { id: 'accounting-4', name: { ar: 'التنظيم', en: 'Organization' }, weight: 5, description: { ar: 'تنظيم السجلات، أرشفة المستندات، نظام العمل', en: 'Record organization, document archiving, work system' } },
+                { id: 'accounting-5', name: { ar: 'المراجعة والتدقيق', en: 'Review & Audit' }, weight: 4, description: { ar: 'دقة المراجعة، اكتشاف التناقضات', en: 'Review accuracy, detecting discrepancies' } },
+                { id: 'accounting-6', name: { ar: 'التعامل مع البرامج المحاسبية', en: 'Accounting Software Handling' }, weight: 3, description: { ar: 'إتقان البرامج المحاسبية المستخدمة', en: 'Mastery of used accounting software' } },
+                { id: 'accounting-7', name: { ar: 'التواصل مع الأقسام', en: 'Communication with Departments' }, weight: 2, description: { ar: 'التواصل الفعال مع باقي الأقسام', en: 'Effective communication with other departments' } }
+            ],
+
+            marble: {
+                projects: [
+                    { id: 'marble-projects-1', name: { ar: 'تنفيذ التعليمات', en: 'Instruction Execution' }, weight: 5, description: { ar: 'الدقة في تنفيذ تعليمات المشرف', en: 'Accuracy in executing supervisor instructions' } },
+                    { id: 'marble-projects-2', name: { ar: 'المقاسات والدقة', en: 'Measurements & Accuracy' }, weight: 5, description: { ar: 'دقة القياسات وشد الخيوط', en: 'Accuracy of measurements and string tension' } },
+                    { id: 'marble-projects-3', name: { ar: 'عزل الحجر السيئ', en: 'Isolating Bad Stone' }, weight: 4, description: { ar: 'تمييز وعزل الحجر غير الجيد', en: 'Identifying and isolating bad stone' } },
+                    { id: 'marble-projects-4', name: { ar: 'ترتيب وتنظيم الموقع', en: 'Site Arrangement & Organization' }, weight: 4, description: { ar: 'ترتيب الحجر والمعدات في الموقع', en: 'Arranging stone and equipment on site' } },
+                    { id: 'marble-projects-5', name: { ar: 'السلامة في العمل', en: 'Work Safety' }, weight: 4, description: { ar: 'الالتزام بإجراءات السلامة', en: 'Adherence to safety procedures' } },
+                    { id: 'marble-projects-6', name: { ar: 'السرعة في الإنجاز', en: 'Accomplishment Speed' }, weight: 4, description: { ar: 'إنجاز المهام في الوقت المحدد', en: 'Completing tasks on time' } },
+                    { id: 'marble-projects-7', name: { ar: 'العمل الجماعي', en: 'Teamwork' }, weight: 4, description: { ar: 'التعاون مع باقي العمال', en: 'Cooperation with other workers' } },
+                    { id: 'marble-projects-8', name: { ar: 'المحافظة على المواد', en: 'Material Preservation' }, weight: 5, description: { ar: 'تقليل الهدر، العناية بالمواد', en: 'Reducing waste, material care' } }
+                ],
+                cutting: [
+                    { id: 'marble-cutting-1', name: { ar: 'دقة القص', en: 'Cutting Accuracy' }, weight: 8, description: { ar: 'دقة القص حسب المقاسات المطلوبة', en: 'Cutting accuracy according to required measurements' } },
+                    { id: 'marble-cutting-2', name: { ar: 'تقليل الهدر', en: 'Waste Reduction' }, weight: 6, description: { ar: 'الاستخدام الأمثل للرخام وتقليل الفاقد', en: 'Optimal use of marble and reducing waste' } },
+                    { id: 'marble-cutting-3', name: { ar: 'سلامة التشغيل', en: 'Operation Safety' }, weight: 6, description: { ar: 'التشغيل الآمن لآلات القص', en: 'Safe operation of cutting machines' } },
+                    { id: 'marble-cutting-4', name: { ar: 'جودة الحواف', en: 'Edge Quality' }, weight: 5, description: { ar: 'نظافة ودقة حواف القطع', en: 'Cleanliness and accuracy of cut edges' } },
+                    { id: 'marble-cutting-5', name: { ar: 'الصيانة البسيطة', en: 'Basic Maintenance' }, weight: 4, description: { ar: 'العناية بالآلات وتنظيفها', en: 'Machine care and cleaning' } },
+                    { id: 'marble-cutting-6', name: { ar: 'تنظيم العمل', en: 'Work Organization' }, weight: 3, description: { ar: 'ترتيب المهام وتنظيم مكان العمل', en: 'Task arrangement and workplace organization' } },
+                    { id: 'marble-cutting-7', name: { ar: 'الإنتاجية', en: 'Productivity' }, weight: 3, description: { ar: 'عدد القطع المنتجة وجودتها', en: 'Number of pieces produced and their quality' } }
+                ],
+                installation: [
+                    { id: 'marble-installation-1', name: { ar: 'دقة التركيب', en: 'Installation Accuracy' }, weight: 8, description: { ar: 'الدقة في تركيب القطع حسب التصميم', en: 'Accuracy in installing pieces according to design' } },
+                    { id: 'marble-installation-2', name: { ar: 'سرعة التركيب', en: 'Installation Speed' }, weight: 6, description: { ar: 'السرعة مع الحفاظ على الجودة', en: 'Speed while maintaining quality' } },
+                    { id: 'marble-installation-3', name: { ar: 'التنسيق والاستواء', en: 'Coordination & Leveling' }, weight: 6, description: { ar: 'استواء التركيب وتناسق القطع', en: 'Installation leveling and piece coordination' } },
+                    { id: 'marble-installation-4', name: { ar: 'التعامل مع الأدوات', en: 'Tool Handling' }, weight: 4, description: { ar: 'مهارة استخدام أدوات التركيب', en: 'Skill in using installation tools' } },
+                    { id: 'marble-installation-5', name: { ar: 'النظافة بعد التركيب', en: 'Cleanliness after Installation' }, weight: 4, description: { ar: 'تنظيف المكان بعد الانتهاء', en: 'Cleaning the place after completion' } },
+                    { id: 'marble-installation-6', name: { ar: 'التعامل مع العملاء', en: 'Customer Interaction' }, weight: 4, description: { ar: 'الاحترافية في التعامل في مواقع العملاء', en: 'Professionalism in dealing at customer sites' } },
+                    { id: 'marble-installation-7', name: { ar: 'السلامة', en: 'Safety' }, weight: 3, description: { ar: 'الالتزام بإجراءات السلامة أثناء التركيب', en: 'Adherence to safety procedures during installation' } }
+                ],
+                finishing: [
+                    { id: 'marble-finishing-1', name: { ar: 'جودة التشطيب', en: 'Finishing Quality' }, weight: 8, description: { ar: 'دقة الصقل والتلميع والتشطيب النهائي', en: 'Accuracy of polishing, shining, and final finishing' } },
+                    { id: 'marble-finishing-2', name: { ar: 'الاهتمام بالتفاصيل', en: 'Attention to Details' }, weight: 6, description: { ar: 'العناية بالتفاصيل الدقيقة', en: 'Care for fine details' } },
+                    { id: 'marble-finishing-3', name: { ar: 'المعالجة النهائية', en: 'Final Treatment' }, weight: 6, description: { ar: 'جودة المعالجات (إذا كانت مطلوبة)', en: 'Quality of treatments (if required)' } },
+                    { id: 'marble-finishing-4', name: { ar: 'استخدام المواد الكيميائية', en: 'Chemical Use' }, weight: 4, description: { ar: 'التعامل الآمن والسليم مع مواد التشطيب', en: 'Safe and proper handling of finishing materials' } },
+                    { id: 'marble-finishing-5', name: { ar: 'العناية بالسطح', en: 'Surface Care' }, weight: 4, description: { ar: 'الحفاظ على سطح الرخام من الخدوش', en: 'Protecting marble surface from scratches' } },
+                    { id: 'marble-finishing-6', name: { ar: 'السرعة في الإنجاز', en: 'Accomplishment Speed' }, weight: 4, description: { ar: 'إنجاز التشطيب في الوقت المحدد', en: 'Completing finishing on time' } },
+                    { id: 'marble-finishing-7', name: { ar: 'الفحص النهائي', en: 'Final Inspection' }, weight: 3, description: { ar: 'فحص الجودة النهائية قبل التسليم', en: 'Final quality inspection before delivery' } }
+                ]
+            }
+        };
+
+        // =============================================
+        // ترجمات النظام
+        // =============================================
+        const translations = {
+            ar: {
+                'report-title': 'النموذج الموحد للتقييم السريع (50 نقطة)',
+                'company-header': 'شركة فالنسيا للرخام والحجر الطبيعي',
+                'date-label': 'التاريخ:',
+                'serial-label': 'الرقم التسلسلي:',
+                'emp-name-label': 'اسم الموظف:',
+                'emp-id-label': 'رقم الموظف:',
+                'job-label': 'الوظيفة:',
+                'supervisor-label': 'المشرف المباشر:',
+                'department-label': 'القسم:',
+                'eval-period-label': 'فترة التقييم:',
+                'criteria-header': 'المعيار',
+                'description-header': 'الوصف',
+                'rating-header': 'التقييم (من 1-5)',
+                'notes-header': 'الملاحظات',
+                'strengths-label': 'نقاط القوة:',
+                'improvements-label': 'مجالات التحسين:',
+                'plan-label': 'خطة التطوير:',
+                'recommendations-label': 'توصيات المشرف:',
+                'supervisor-signature-label': 'توقيع المشرف المباشر',
+                'manager-signature-label': 'توقيع مدير القسم',
+                'hr-stamp-label': 'ختم الموارد البشرية',
+                'name-label': 'الاسم:',
+                'date-label-2': 'التاريخ:',
+                'system-title': 'نظام التقييم السريع الموحد',
+                'company-name': 'شركة فالنسيا للرخام والحجر الطبيعي',
+                'btn-print-text': 'طباعة وإرسال تلقائي',
+                'btn-reset-text': 'تصفير الرقم التسلسلي',
+                'language-text': 'English',
+                'current-serial-label': 'الرقم التسلسلي الحالي:',
+                'auto-calc-note': 'يتم حساب النتائج تلقائياً عند اختيار التقييمات',
+                'tab-sales': 'المبيعات',
+                'tab-warehouse': 'المستودعات',
+                'tab-projects': 'المشاريع',
+                'tab-design': 'التصميم',
+                'tab-equipment': 'الآليات',
+                'tab-marketing': 'التسويق الإلكتروني',
+                'tab-accounting': 'المالية',
+                'tab-marble': 'الرخام',
+                'summary-general': 'المعايير العامة',
+                'summary-special': 'المعايير الخاصة',
+                'summary-total': 'المجموع النهائي',
+                'summary-percentage': 'النسبة المئوية',
+                'modal-title': 'تأكيد تصفير الرقم التسلسلي',
+                'modal-message': 'هل أنت متأكد من أنك تريد تصفير الرقم التسلسلي؟',
+                'modal-detail': 'سيتم إعادة ضبط العداد إلى الرقم:',
+                'modal-confirm': 'نعم، تصفير',
+                'modal-cancel': 'إلغاء'
+            },
+            en: {
+                'report-title': 'Unified Quick Evaluation Form (50 Points)',
+                'company-header': 'Valencia Marble & Natural Stone Company',
+                'date-label': 'Date:',
+                'serial-label': 'Serial Number:',
+                'emp-name-label': 'Employee Name:',
+                'emp-id-label': 'Employee ID:',
+                'job-label': 'Job Title:',
+                'supervisor-label': 'Direct Supervisor:',
+                'department-label': 'Department:',
+                'eval-period-label': 'Evaluation Period:',
+                'criteria-header': 'Criterion',
+                'description-header': 'Description',
+                'rating-header': 'Rating (1-5)',
+                'notes-header': 'Notes',
+                'strengths-label': 'Strengths:',
+                'improvements-label': 'Areas for Improvement:',
+                'plan-label': 'Development Plan:',
+                'recommendations-label': 'Supervisor Recommendations:',
+                'supervisor-signature-label': 'Direct Supervisor Signature',
+                'manager-signature-label': 'Department Manager Signature',
+                'hr-stamp-label': 'HR Stamp',
+                'name-label': 'Name:',
+                'date-label-2': 'Date:',
+                'system-title': 'Unified Quick Evaluation System',
+                'company-name': 'Valencia Marble & Natural Stone Company',
+                'btn-print-text': 'Print & Auto Send',
+                'btn-reset-text': 'Reset Serial Number',
+                'language-text': 'العربية',
+                'current-serial-label': 'Current Serial Number:',
+                'auto-calc-note': 'Results are calculated automatically when selecting ratings',
+                'tab-sales': 'Sales',
+                'tab-warehouse': 'Warehouse',
+                'tab-projects': 'Projects',
+                'tab-design': 'Design',
+                'tab-equipment': 'Equipment',
+                'tab-marketing': 'Digital Marketing',
+                'tab-accounting': 'Finance',
+                'tab-marble': 'Marble',
+                'summary-general': 'General Criteria',
+                'summary-special': 'Special Criteria',
+                'summary-total': 'Final Total',
+                'summary-percentage': 'Percentage',
+                'modal-title': 'Confirm Serial Number Reset',
+                'modal-message': 'Are you sure you want to reset the serial number?',
+                'modal-detail': 'The counter will be reset to number:',
+                'modal-confirm': 'Yes, Reset',
+                'modal-cancel': 'Cancel'
+            }
+        };
+
+        // =============================================
+        // نظام الإشعارات
+        // =============================================
+        class NotificationSystem {
+            constructor() {
+                this.container = document.getElementById('notifications-container');
+            }
+
+            show(type, message, duration = 5000) {
+                const notification = document.createElement('div');
+                notification.className = `notification notification-${type}`;
+
+                let icon = 'info-circle';
+                if (type === 'success') icon = 'check-circle';
+                if (type === 'error') icon = 'exclamation-circle';
+                if (type === 'warning') icon = 'exclamation-triangle';
+
+                notification.innerHTML = `
+                    <i class="fas fa-${icon}"></i>
+                    <div>${message}</div>
+                `;
+
+                this.container.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.style.animation = 'fadeOut 0.3s ease-out';
+                    setTimeout(() => notification.remove(), 300);
+                }, duration);
+            }
+        }
+
+        const notifications = new NotificationSystem();
+
+        // =============================================
+        // تهيئة الصفحة
+        // =============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAllSections();
+            setCurrentDate();
+            updateSerialNumberDisplay();
+            applyLanguage();
+            updateDepartmentBadge();
+
+            // استعادة البيانات المحفوظة
+            restoreDraft();
+
+            // إضافة مستمعات الأحداث
+            attachEventListeners();
+
+            // رسالة ترحيب
+            setTimeout(() => {
+                notifications.show('info',
+                    currentLanguage === 'ar'
+                        ? '🚀 نظام التقييم السريع الموحد جاهز للاستخدام'
+                        : '🚀 Unified Quick Evaluation System is ready'
+                );
+            }, 1000);
+        });
+
+        // =============================================
+        // دوال النظام الأساسية
+        // =============================================
+        function initializeAllSections() {
+            // تهيئة جميع الأقسام
+            initializeGeneralCriteria();
+            initializeSpecialCriteria();
+        }
+
+        function initializeGeneralCriteria() {
+            // تهيئة المعايير العامة لجميع الأقسام
+            const departments = ['sales', 'warehouse', 'projects', 'design', 'equipment', 'marketing', 'accounting', 'marble'];
+
+            departments.forEach(dept => {
+                const tbody = document.getElementById(`general-criteria-${dept}`);
+                if (!tbody) return;
+
+                tbody.innerHTML = '';
+
+                generalCriteria.forEach((criterion, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${criterion.name[currentLanguage] || criterion.name.ar}</td>
+                        <td><div class="criteria-description">${criterion.description[currentLanguage] || criterion.description.ar}</div></td>
+                        <td>
+                            <div class="rating-options">
+                                ${[1, 2, 3, 4, 5].map(num => `
+                                    <div class="rating-option" onclick="selectRating(this, '${criterion.id}-${dept}')" data-value="${num}">
+                                        ${num}
+                                    </div>
+                                `).join('')}
+                                <input type="hidden" class="rating-input" id="${criterion.id}-${dept}" value="0">
+                            </div>
+                        </td>
+                        <td class="notes-cell">
+                            <textarea id="notes-${criterion.id}-${dept}" placeholder="${currentLanguage === 'ar' ? 'ملاحظات إضافية...' : 'Additional notes...'}" oninput="autoSave()"></textarea>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            });
+        }
+
+        function initializeSpecialCriteria() {
+            // تهيئة المعايير الخاصة لكل قسم
+            initializeDepartmentCriteria('sales', specialCriteria.sales);
+            initializeDepartmentCriteria('warehouse', specialCriteria.warehouse);
+            initializeDepartmentCriteria('projects', specialCriteria.projects);
+            initializeDepartmentCriteria('design', specialCriteria.design);
+            initializeDepartmentCriteria('accounting', specialCriteria.accounting);
+
+            // الأقسام ذات الجداول الفرعية
+            initializeEquipmentCriteria();
+            initializeMarketingCriteria();
+            initializeMarbleCriteria();
+        }
+
+        function initializeDepartmentCriteria(dept, criteria) {
+            const tbody = document.getElementById(`special-criteria-${dept}`);
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+
+            criteria.forEach((criterion, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${criterion.name[currentLanguage] || criterion.name.ar}</td>
+                    <td>
+                        <div class="criteria-description">${criterion.description[currentLanguage] || criterion.description.ar}</div>
+                    </td>
+                    <td class="weight-cell">${criterion.weight}</td>
+                    <td>
+                        <div class="rating-options">
+                            ${[1, 2, 3, 4, 5].map(num => `
+                                <div class="rating-option" onclick="selectRating(this, '${criterion.id}')" data-value="${num}">
+                                    ${num}
+                                </div>
+                            `).join('')}
+                            <input type="hidden" class="rating-input" id="${criterion.id}" value="0">
+                        </div>
+                    </td>
+                    <td class="notes-cell">
+                        <textarea id="notes-${criterion.id}" placeholder="${currentLanguage === 'ar' ? 'ملاحظات إضافية...' : 'Additional notes...'}" oninput="autoSave()"></textarea>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function initializeEquipmentCriteria() {
+            // السيارات العامة والشحن
+            const carsTbody = document.getElementById('special-criteria-equipment-cars');
+            if (carsTbody && specialCriteria.equipment.cars) {
+                carsTbody.innerHTML = '';
+
+                specialCriteria.equipment.cars.forEach((criterion, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${criterion.name[currentLanguage] || criterion.name.ar}</td>
+                        <td>
+                            <div class="criteria-description">${criterion.description[currentLanguage] || criterion.description.ar}</div>
+                        </td>
+                        <td class="weight-cell">${criterion.weight}</td>
+                        <td>
+                            <div class="rating-options">
+                                ${[1, 2, 3, 4, 5].map(num => `
+                                    <div class="rating-option" onclick="selectRating(this, '${criterion.id}')" data-value="${num}">
+                                        ${num}
+                                    </div>
+                                `).join('')}
+                                <input type="hidden" class="rating-input" id="${criterion.id}" value="0">
+                            </div>
+                        </td>
+                        <td class="notes-cell">
+                            <textarea id="notes-${criterion.id}" placeholder="${currentLanguage === 'ar' ? 'ملاحظات إضافية...' : 'Additional notes...'}" oninput="autoSave()"></textarea>
+                        </td>
+                    `;
+                    carsTbody.appendChild(row);
+                });
+            }
+
+            // الفوركلفت
+            const forkliftTbody = document.getElementById('special-criteria-equipment-forklift');
+            if (forkliftTbody && specialCriteria.equipment.forklift) {
+                forkliftTbody.innerHTML = '';
+
+                specialCriteria.equipment.forklift.forEach((criterion, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${criterion.name[currentLanguage] || criterion.name.ar}</td>
+                        <td>
+                            <div class="criteria-description">${criterion.description[currentLanguage] || criterion.description.ar}</div>
+                        </td>
+                        <td class="weight-cell">${criterion.weight}</td>
+                        <td>
+                            <div class="rating-options">
+                                ${[1, 2, 3, 4, 5].map(num => `
+                                    <div class="rating-option" onclick="selectRating(this, '${criterion.id}')" data-value="${num}">
+                                        ${num}
+                                    </div>
+                                `).join('')}
+                                <input type="hidden" class="rating-input" id="${criterion.id}" value="0">
+                            </div>
+                        </td>
+                        <td class="notes-cell">
+                            <textarea id="notes-${criterion.id}" placeholder="${currentLanguage === 'ar' ? 'ملاحظات إضافية...' : 'Additional notes...'}" oninput="autoSave()"></textarea>
+                        </td>
+                    `;
+                    forkliftTbody.appendChild(row);
+                });
+            }
+        }
+
+        function initializeMarketingCriteria() {
+            // المصور
+            const photographerTbody = document.getElementById('special-criteria-marketing-photographer');
+            if (photographerTbody && specialCriteria.marketing.photographer) {
+                photographerTbody.innerHTML = '';
+
+                specialCriteria.marketing.photographer.forEach((criterion, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${criterion.name[currentLanguage] || criterion.name.ar}</td>
+                        <td>
+                            <div class="criteria-description">${criterion.description[currentLanguage] || criterion.description.ar}</div>
+                        </td>
+                        <td class="weight-cell">${criterion.weight}</td>
+                        <td>
+                            <div class="rating-options">
+                                ${[1, 2, 3, 4, 5].map(num => `
+                                    <div class="rating-option" onclick="selectRating(this, '${criterion.id}')" data-value="${num}">
+                                        ${num}
+                                    </div>
+                                `).join('')}
+                                <input type="hidden" class="rating-input" id="${criterion.id}" value="0">
+                            </div>
+                        </td>
+                        <td class="notes-cell">
+                            <textarea id="notes-${criterion.id}" placeholder="${currentLanguage === 'ar' ? 'ملاحظات إضافية...' : 'Additional notes...'}" oninput="autoSave()"></textarea>
+                        </td>
+                    `;
+                    photographerTbody.appendChild(row);
+                });
+            }
+
+            // المونتاج
+            const editorTbody = document.getElementById('special-criteria-marketing-editor');
+            if (editorTbody && specialCriteria.marketing.editor) {
+                editorTbody.innerHTML = '';
+
+                specialCriteria.marketing.editor.forEach((criterion, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${criterion.name[currentLanguage] || criterion.name.ar}</td>
+                        <td>
+                            <div class="criteria-description">${criterion.description[currentLanguage] || criterion.description.ar}</div>
+                        </td>
+                        <td class="weight-cell">${criterion.weight}</td>
+                        <td>
+                            <div class="rating-options">
+                                ${[1, 2, 3, 4, 5].map(num => `
+                                    <div class="rating-option" onclick="selectRating(this, '${criterion.id}')" data-value="${num}">
+                                        ${num}
+                                    </div>
+                                `).join('')}
+                                <input type="hidden" class="rating-input" id="${criterion.id}" value="0">
+                            </div>
+                        </td>
+                        <td class="notes-cell">
+                            <textarea id="notes-${criterion.id}" placeholder="${currentLanguage === 'ar' ? 'ملاحظات إضافية...' : 'Additional notes...'}" oninput="autoSave()"></textarea>
+                        </td>
+                    `;
+                    editorTbody.appendChild(row);
+                });
+            }
+
+            // مصمم الإعلان
+            const designerTbody = document.getElementById('special-criteria-marketing-designer');
+            if (designerTbody && specialCriteria.marketing.designer) {
+                designerTbody.innerHTML = '';
+
+                specialCriteria.marketing.designer.forEach((criterion, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${criterion.name[currentLanguage] || criterion.name.ar}</td>
+                        <td>
+                            <div class="criteria-description">${criterion.description[currentLanguage] || criterion.description.ar}</div>
+                        </td>
+                        <td class="weight-cell">${criterion.weight}</td>
+                        <td>
+                            <div class="rating-options">
+                                ${[1, 2, 3, 4, 5].map(num => `
+                                    <div class="rating-option" onclick="selectRating(this, '${criterion.id}')" data-value="${num}">
+                                        ${num}
+                                    </div>
+                                `).join('')}
+                                <input type="hidden" class="rating-input" id="${criterion.id}" value="0">
+                            </div>
+                        </td>
+                        <td class="notes-cell">
+                            <textarea id="notes-${criterion.id}" placeholder="${currentLanguage === 'ar' ? 'ملاحظات إضافية...' : 'Additional notes...'}" oninput="autoSave()"></textarea>
+                        </td>
+                    `;
+                    designerTbody.appendChild(row);
+                });
+            }
+        }
+
+        function initializeMarbleCriteria() {
+            // عمال المشاريع
+            const projectsTbody = document.getElementById('special-criteria-marble-projects');
+            if (projectsTbody && specialCriteria.marble.projects) {
+                projectsTbody.innerHTML = '';
+
+                specialCriteria.marble.projects.forEach((criterion, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${criterion.name[currentLanguage] || criterion.name.ar}</td>
+                        <td>
+                            <div class="criteria-description">${criterion.description[currentLanguage] || criterion.description.ar}</div>
+                        </td>
+                        <td class="weight-cell">${criterion.weight}</td>
+                        <td>
+                            <div class="rating-options">
+                                ${[1, 2, 3, 4, 5].map(num => `
+                                    <div class="rating-option" onclick="selectRating(this, '${criterion.id}')" data-value="${num}">
+                                        ${num}
+                                    </div>
+                                `).join('')}
+                                <input type="hidden" class="rating-input" id="${criterion.id}" value="0">
+                            </div>
+                        </td>
+                        <td class="notes-cell">
+                            <textarea id="notes-${criterion.id}" placeholder="${currentLanguage === 'ar' ? 'ملاحظات إضافية...' : 'Additional notes...'}" oninput="autoSave()"></textarea>
+                        </td>
+                    `;
+                    projectsTbody.appendChild(row);
+                });
+            }
+
+            // عمال القص
+            const cuttingTbody = document.getElementById('special-criteria-marble-cutting');
+            if (cuttingTbody && specialCriteria.marble.cutting) {
+                cuttingTbody.innerHTML = '';
+
+                specialCriteria.marble.cutting.forEach((criterion, index) => {
+                    const row = document.createElement('tr');
+                                        row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${criterion.name[currentLanguage] || criterion.name.ar}</td>
+                        <td>
+                            <div class="criteria-description">${criterion.description[currentLanguage] || criterion.description.ar}</div>
+                        </td>
+                        <td class="weight-cell">${criterion.weight}</td>
+                        <td>
+                            <div class="rating-options">
+                                ${[1, 2, 3, 4, 5].map(num => `
+                                    <div class="rating-option" onclick="selectRating(this, '${criterion.id}')" data-value="${num}">
+                                        ${num}
+                                    </div>
+                                `).join('')}
+                                <input type="hidden" class="rating-input" id="${criterion.id}" value="0">
+                            </div>
+                        </td>
+                        <td class="notes-cell">
+                            <textarea id="notes-${criterion.id}" placeholder="${currentLanguage === 'ar' ? 'ملاحظات إضافية...' : 'Additional notes...'}" oninput="autoSave()"></textarea>
+                        </td>
+                    `;
+                    cuttingTbody.appendChild(row);
+                });
+            }
+
+            // عمال التركيب
+            const installationTbody = document.getElementById('special-criteria-marble-installation');
+            if (installationTbody && specialCriteria.marble.installation) {
+                installationTbody.innerHTML = '';
+
+                specialCriteria.marble.installation.forEach((criterion, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${criterion.name[currentLanguage] || criterion.name.ar}</td>
+                        <td>
+                            <div class="criteria-description">${criterion.description[currentLanguage] || criterion.description.ar}</div>
+                        </td>
+                        <td class="weight-cell">${criterion.weight}</td>
+                        <td>
+                            <div class="rating-options">
+                                ${[1, 2, 3, 4, 5].map(num => `
+                                    <div class="rating-option" onclick="selectRating(this, '${criterion.id}')" data-value="${num}">
+                                        ${num}
+                                    </div>
+                                `).join('')}
+                                <input type="hidden" class="rating-input" id="${criterion.id}" value="0">
+                            </div>
+                        </td>
+                        <td class="notes-cell">
+                            <textarea id="notes-${criterion.id}" placeholder="${currentLanguage === 'ar' ? 'ملاحظات إضافية...' : 'Additional notes...'}" oninput="autoSave()"></textarea>
+                        </td>
+                    `;
+                    installationTbody.appendChild(row);
+                });
+            }
+
+            // عمال التشطيب
+            const finishingTbody = document.getElementById('special-criteria-marble-finishing');
+            if (finishingTbody && specialCriteria.marble.finishing) {
+                finishingTbody.innerHTML = '';
+
+                specialCriteria.marble.finishing.forEach((criterion, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${criterion.name[currentLanguage] || criterion.name.ar}</td>
+                        <td>
+                            <div class="criteria-description">${criterion.description[currentLanguage] || criterion.description.ar}</div>
+                        </td>
+                        <td class="weight-cell">${criterion.weight}</td>
+                        <td>
+                            <div class="rating-options">
+                                ${[1, 2, 3, 4, 5].map(num => `
+                                    <div class="rating-option" onclick="selectRating(this, '${criterion.id}')" data-value="${num}">
+                                        ${num}
+                                    </div>
+                                `).join('')}
+                                <input type="hidden" class="rating-input" id="${criterion.id}" value="0">
+                            </div>
+                        </td>
+                        <td class="notes-cell">
+                            <textarea id="notes-${criterion.id}" placeholder="${currentLanguage === 'ar' ? 'ملاحظات إضافية...' : 'Additional notes...'}" oninput="autoSave()"></textarea>
+                        </td>
+                    `;
+                    finishingTbody.appendChild(row);
+                });
+            }
+        }
+
+        // =============================================
+        // دوال مساعدة
+        // =============================================
+        function setCurrentDate() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('ar-SA', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('current-date').textContent = dateStr;
+            document.getElementById('print-current-date').textContent = dateStr;
+        }
+
+        function updateSerialNumberDisplay() {
+            const serialNumber = `VAL-${serialNumberCounter.toString().padStart(6, '0')}`;
+            document.getElementById('serial-number').textContent = serialNumber;
+            document.getElementById('print-serial-number').textContent = serialNumber;
+            document.getElementById('current-serial-display').textContent = serialNumber;
+        }
+
+        function applyLanguage() {
+            // تحديث اتجاه الصفحة
+            document.body.dir = currentLanguage === 'ar' ? 'rtl' : 'ltr';
+
+            // تحديث جميع النصوص المترجمة
+            Object.keys(translations[currentLanguage]).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.textContent = translations[currentLanguage][key];
+                }
+            });
+
+            // تحديث العناصر الأخرى
+            const langText = document.getElementById('language-text');
+            if (langText) {
+                langText.textContent = currentLanguage === 'ar' ? 'English' : 'العربية';
+            }
+
+            // إعادة تهيئة المعايير بلغة جديدة
+            initializeAllSections();
+
+            // إعادة حساب النتائج
+            calculateAllScores();
+        }
+
+        function updateDepartmentBadge() {
+            const badge = document.getElementById('department-badge');
+            if (!badge) return;
+
+            const departmentNames = {
+                sales: currentLanguage === 'ar' ? 'المبيعات' : 'Sales',
+                warehouse: currentLanguage === 'ar' ? 'المستودعات' : 'Warehouse',
+                projects: currentLanguage === 'ar' ? 'المشاريع' : 'Projects',
+                design: currentLanguage === 'ar' ? 'التصميم' : 'Design',
+                equipment: currentLanguage === 'ar' ? 'الآليات' : 'Equipment',
+                marketing: currentLanguage === 'ar' ? 'التسويق الإلكتروني' : 'Digital Marketing',
+                accounting: currentLanguage === 'ar' ? 'المالية' : 'Finance',
+                marble: currentLanguage === 'ar' ? 'الرخام' : 'Marble'
+            };
+
+            badge.textContent = departmentNames[currentDepartment] || departmentNames.sales;
+        }
+
+        function restoreDraft() {
+            try {
+                const draft = localStorage.getItem('valenciaQuickEvalDraft');
+                if (draft) {
+                    const data = JSON.parse(draft);
+
+                    // استعادة بيانات الموظف
+                    if (data.employee) {
+                        document.getElementById('emp-name').value = data.employee.name || '';
+                        document.getElementById('emp-id').value = data.employee.id || '';
+                        document.getElementById('emp-job').value = data.employee.job || '';
+                        document.getElementById('supervisor').value = data.employee.supervisor || '';
+                        document.getElementById('department').value = data.employee.department || '';
+                        document.getElementById('eval-period').value = data.employee.period || '';
+                    }
+
+                    // استعادة التقييمات
+                    if (data.ratings) {
+                        Object.keys(data.ratings).forEach(id => {
+                            const input = document.getElementById(id);
+                            if (input) {
+                                input.value = data.ratings[id];
+                                // تحديث العرض المرئي
+                                const ratingOptions = input.parentElement.querySelectorAll('.rating-option');
+                                ratingOptions.forEach(option => {
+                                    if (parseInt(option.getAttribute('data-value')) === parseInt(data.ratings[id])) {
+                                        option.classList.add('selected');
+                                    } else {
+                                        option.classList.remove('selected');
+                                    }
+                                });
+                            }
+                        });
+                    }
+
+                    // استعادة الملاحظات
+                    if (data.notes) {
+                        Object.keys(data.notes).forEach(id => {
+                            const textarea = document.getElementById(`notes-${id}`);
+                            if (textarea) {
+                                textarea.value = data.notes[id];
+                            }
+                        });
+                    }
+
+                    // استعادة الملاحظات العامة
+                    if (data.generalNotes) {
+                        document.getElementById('strengths').value = data.generalNotes.strengths || '';
+                        document.getElementById('improvements').value = data.generalNotes.improvements || '';
+                        document.getElementById('development-plan').value = data.generalNotes.plan || '';
+                        document.getElementById('supervisor-notes').value = data.generalNotes.supervisor || '';
+                    }
+
+                    // إعادة حساب النتائج
+                    calculateAllScores();
+
+                    notifications.show('info', currentLanguage === 'ar'
+                        ? 'تم استعادة المسودة المحفوظة بنجاح'
+                        : 'Draft restored successfully'
+                    );
+                }
+            } catch (error) {
+                console.error('Error restoring draft:', error);
+            }
+        }
+
+        function autoSave() {
+            clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(saveDraft, 1000);
+        }
+
+        function saveDraft() {
+            try {
+                const data = {
+                    employee: {
+                        name: document.getElementById('emp-name').value,
+                        id: document.getElementById('emp-id').value,
+                        job: document.getElementById('emp-job').value,
+                        supervisor: document.getElementById('supervisor').value,
+                        department: document.getElementById('department').value,
+                        period: document.getElementById('eval-period').value
+                    },
+                    ratings: {},
+                    notes: {},
+                    generalNotes: {
+                        strengths: document.getElementById('strengths').value,
+                        improvements: document.getElementById('improvements').value,
+                        plan: document.getElementById('development-plan').value,
+                        supervisor: document.getElementById('supervisor-notes').value
+                    },
+                    timestamp: new Date().toISOString()
+                };
+
+                // جمع جميع التقييمات
+                document.querySelectorAll('.rating-input').forEach(input => {
+                    if (input.value && input.value !== '0') {
+                        data.ratings[input.id] = input.value;
+                    }
+                });
+
+                // جمع جميع الملاحظات
+                document.querySelectorAll('textarea[id^="notes-"]').forEach(textarea => {
+                    if (textarea.value.trim()) {
+                        const id = textarea.id.replace('notes-', '');
+                        data.notes[id] = textarea.value;
+                    }
+                });
+
+                localStorage.setItem('valenciaQuickEvalDraft', JSON.stringify(data));
+
+                // إعادة حساب النتائج
+                calculateAllScores();
+            } catch (error) {
+                console.error('Error saving draft:', error);
+            }
+        }
+
+        function attachEventListeners() {
+            // إضافة مستمعات الأحداث للحقول
+            const fields = document.querySelectorAll('input, textarea, select');
+            fields.forEach(field => {
+                field.addEventListener('input', autoSave);
+                field.addEventListener('change', autoSave);
+            });
+        }
+
+        // =============================================
+        // دوال التقييم
+        // =============================================
+        function selectRating(element, ratingId) {
+            const ratingValue = element.getAttribute('data-value');
+            const input = document.getElementById(ratingId);
+
+            if (!input) return;
+
+            // إلغاء تحديد جميع الخيارات في المجموعة
+            const ratingOptions = element.parentElement.querySelectorAll('.rating-option');
+            ratingOptions.forEach(option => {
+                option.classList.remove('selected');
+            });
+
+            // تحديد الخيار المختار
+            element.classList.add('selected');
+            input.value = ratingValue;
+
+            // حفظ وتحديث النتائج
+            autoSave();
+            calculateAllScores();
+        }
+
+        function calculateAllScores() {
+            // عرض مؤشر التحميل
+            const spinner = document.getElementById('calculation-spinner');
+            spinner.style.display = 'inline-block';
+
+            setTimeout(() => {
+                try {
+                    // حساب النتائج لكل قسم
+                    const departments = ['sales', 'warehouse', 'projects', 'design', 'equipment', 'marketing', 'accounting', 'marble'];
+
+                    let generalTotal = 0;
+                    let specialTotal = 0;
+
+                    departments.forEach(dept => {
+                        if (document.getElementById(`${dept}-evaluation`).style.display !== 'none') {
+                            // حساب المعايير العامة لهذا القسم
+                            const generalScore = calculateGeneralScore(dept);
+                            document.getElementById(`general-total-${dept}`).textContent = generalScore;
+
+                            // حساب المعايير الخاصة لهذا القسم
+                            const specialScore = calculateSpecialScore(dept);
+                            document.getElementById(`special-total-${dept}`).textContent = specialScore;
+
+                            // حساب الإجمالي النهائي
+                            const totalScore = generalScore + specialScore;
+                            const percentage = Math.round((totalScore / 50) * 100);
+
+                            document.getElementById(`final-total-${dept}`).textContent = totalScore;
+                            document.getElementById(`final-percentage-${dept}`).textContent = `${percentage}%`;
+
+                            // تحديث القيم العامة
+                            generalTotal = generalScore;
+                            specialTotal = specialScore;
+                        }
+                    });
+
+                    // تحديث ملخص النتائج
+                    const totalScore = generalTotal + specialTotal;
+                    const percentage = Math.round((totalScore / 50) * 100);
+
+                    document.getElementById('summary-general-score').textContent = `${generalTotal}/15`;
+                    document.getElementById('summary-special-score').textContent = `${specialTotal}/35`;
+                    document.getElementById('summary-total-score').textContent = `${totalScore}/50`;
+                    document.getElementById('summary-percentage-score').textContent = `${percentage}%`;
+
+                    spinner.style.display = 'none';
+                } catch (error) {
+                    console.error('Error calculating scores:', error);
+                    spinner.style.display = 'none';
+                }
+            }, 300);
+        }
+
+        function calculateGeneralScore(department) {
+            let total = 0;
+            generalCriteria.forEach(criterion => {
+                const input = document.getElementById(`${criterion.id}-${department}`);
+                if (input && input.value && input.value !== '0') {
+                    total += parseInt(input.value);
+                }
+            });
+            return total;
+        }
+
+        function calculateSpecialScore(department) {
+            let total = 0;
+
+            if (department === 'equipment') {
+                const driverType = document.getElementById('driver-type').value;
+                if (driverType === 'cars') {
+                    specialCriteria.equipment.cars.forEach(criterion => {
+                        const input = document.getElementById(criterion.id);
+                        if (input && input.value && input.value !== '0') {
+                            total += parseInt(input.value) * criterion.weight;
+                        }
+                    });
+                } else if (driverType === 'forklift') {
+                    specialCriteria.equipment.forklift.forEach(criterion => {
+                        const input = document.getElementById(criterion.id);
+                        if (input && input.value && input.value !== '0') {
+                            total += parseInt(input.value) * criterion.weight;
+                        }
+                    });
+                }
+            } else if (department === 'marketing') {
+                const role = document.getElementById('marketing-role').value;
+                if (role === 'photographer') {
+                    specialCriteria.marketing.photographer.forEach(criterion => {
+                        const input = document.getElementById(criterion.id);
+                        if (input && input.value && input.value !== '0') {
+                            total += parseInt(input.value) * criterion.weight;
+                        }
+                    });
+                } else if (role === 'editor') {
+                    specialCriteria.marketing.editor.forEach(criterion => {
+                        const input = document.getElementById(criterion.id);
+                        if (input && input.value && input.value !== '0') {
+                            total += parseInt(input.value) * criterion.weight;
+                        }
+                    });
+                } else if (role === 'designer') {
+                    specialCriteria.marketing.designer.forEach(criterion => {
+                        const input = document.getElementById(criterion.id);
+                        if (input && input.value && input.value !== '0') {
+                            total += parseInt(input.value) * criterion.weight;
+                        }
+                    });
+                }
+            } else if (department === 'marble') {
+                const role = document.getElementById('marble-role').value;
+                if (role === 'projects') {
+                    specialCriteria.marble.projects.forEach(criterion => {
+                        const input = document.getElementById(criterion.id);
+                        if (input && input.value && input.value !== '0') {
+                            total += parseInt(input.value) * criterion.weight;
+                        }
+                    });
+                } else if (role === 'cutting') {
+                    specialCriteria.marble.cutting.forEach(criterion => {
+                        const input = document.getElementById(criterion.id);
+                        if (input && input.value && input.value !== '0') {
+                            total += parseInt(input.value) * criterion.weight;
+                        }
+                    });
+                } else if (role === 'installation') {
+                    specialCriteria.marble.installation.forEach(criterion => {
+                        const input = document.getElementById(criterion.id);
+                        if (input && input.value && input.value !== '0') {
+                            total += parseInt(input.value) * criterion.weight;
+                        }
+                    });
+                } else if (role === 'finishing') {
+                    specialCriteria.marble.finishing.forEach(criterion => {
+                        const input = document.getElementById(criterion.id);
+                        if (input && input.value && input.value !== '0') {
+                            total += parseInt(input.value) * criterion.weight;
+                        }
+                    });
+                }
+            } else if (specialCriteria[department]) {
+                specialCriteria[department].forEach(criterion => {
+                    const input = document.getElementById(criterion.id);
+                    if (input && input.value && input.value !== '0') {
+                        total += parseInt(input.value) * criterion.weight;
+                    }
+                });
+            }
+
+            return total;
+        }
+
+        // =============================================
+        // دوال التحكم بالأقسام
+        // =============================================
+        function switchDepartment(department) {
+            // تحديث التبويب النشط
+            document.querySelectorAll('.department-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            const activeTab = document.querySelector(`.department-tab[data-department="${department}"]`);
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
+
+            // إخفاء جميع أقسام التقييم
+            document.querySelectorAll('.quick-evaluation-section').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // إظهار القسم المحدد
+            const targetSection = document.getElementById(`${department}-evaluation`);
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            }
+
+            // تحديث القسم في النموذج
+            document.getElementById('department').value = getDepartmentName(department);
+
+            // تحديث القسم الحالي
+            currentDepartment = department;
+            updateDepartmentBadge();
+
+            // إعادة حساب النتائج
+            calculateAllScores();
+
+            // حفظ التغيير
+            autoSave();
+        }
+
+        function getDepartmentName(departmentCode) {
+            const departmentMap = {
+                sales: 'المبيعات',
+                warehouse: 'المستودعات',
+                projects: 'المشاريع',
+                design: 'التصميم',
+                equipment: 'الآليات',
+                marketing: 'التسويق الإلكتروني',
+                accounting: 'المالية',
+                marble: 'الرخام'
+            };
+
+            return departmentMap[departmentCode] || 'المبيعات';
+        }
+
+        function updateDepartmentSelection() {
+            const selectedDept = document.getElementById('department').value;
+            const departmentMap = {
+                'المبيعات': 'sales',
+                'المستودعات': 'warehouse',
+                'المشاريع': 'projects',
+                'التصميم': 'design',
+                'الآليات': 'equipment',
+                'التسويق الإلكتروني': 'marketing',
+                'المالية': 'accounting',
+                'الرخام': 'marble'
+            };
+
+            if (departmentMap[selectedDept]) {
+                switchDepartment(departmentMap[selectedDept]);
+            }
+        }
+
+        function updateEquipmentCriteria() {
+            const driverType = document.getElementById('driver-type').value;
+
+            if (driverType === 'cars') {
+                document.getElementById('cars-table').style.display = 'table';
+                document.getElementById('forklift-table').style.display = 'none';
+            } else {
+                document.getElementById('cars-table').style.display = 'none';
+                document.getElementById('forklift-table').style.display = 'table';
+            }
+
+            calculateAllScores();
+            autoSave();
+        }
+
+        function updateMarketingCriteria() {
+            const role = document.getElementById('marketing-role').value;
+
+            // إخفاء جميع الجداول
+            document.getElementById('photographer-table').style.display = 'none';
+            document.getElementById('editor-table').style.display = 'none';
+            document.getElementById('designer-table').style.display = 'none';
+
+            // إظهار الجدول المحدد
+            if (role === 'photographer') {
+                document.getElementById('photographer-table').style.display = 'table';
+            } else if (role === 'editor') {
+                document.getElementById('editor-table').style.display = 'table';
+            } else if (role === 'designer') {
+                document.getElementById('designer-table').style.display = 'table';
+            }
+
+            calculateAllScores();
+            autoSave();
+        }
+
+        function updateMarbleCriteria() {
+            const role = document.getElementById('marble-role').value;
+
+            // إخفاء جميع الجداول
+            document.getElementById('projects-table').style.display = 'none';
+            document.getElementById('cutting-table').style.display = 'none';
+            document.getElementById('installation-table').style.display = 'none';
+            document.getElementById('finishing-table').style.display = 'none';
+
+            // إظهار الجدول المحدد
+            if (role === 'projects') {
+                document.getElementById('projects-table').style.display = 'table';
+            } else if (role === 'cutting') {
+                document.getElementById('cutting-table').style.display = 'table';
+            } else if (role === 'installation') {
+                document.getElementById('installation-table').style.display = 'table';
+            } else if (role === 'finishing') {
+                document.getElementById('finishing-table').style.display = 'table';
+            }
+
+            calculateAllScores();
+            autoSave();
+        }
+
+        // =============================================
+        // دوال الطباعة والإرسال
+        // =============================================
+        function prepareAndPrint() {
+            // التحقق من إدخال البيانات الأساسية
+            const empName = document.getElementById('emp-name').value.trim();
+            if (!empName) {
+                notifications.show('error',
+                    currentLanguage === 'ar'
+                        ? 'يرجى إدخال اسم الموظف أولاً'
+                        : 'Please enter employee name first'
+                );
+                document.getElementById('emp-name').focus();
+                return;
+            }
+
+            // التحقق من وجود تقييمات
+            let hasRatings = false;
+            document.querySelectorAll('.rating-input').forEach(input => {
+                if (input.value && input.value !== '0') {
+                    hasRatings = true;
+                }
+            });
+
+            if (!hasRatings) {
+                notifications.show('warning',
+                    currentLanguage === 'ar'
+                        ? 'لم تقم بإدخال أي تقييمات بعد'
+                        : 'No ratings have been entered yet'
+                );
+                return;
+            }
+
+            // تحديث التاريخ
+            setCurrentDate();
+
+            // زيادة الرقم التسلسلي وحفظه
+            serialNumberCounter++;
+            localStorage.setItem('valenciaQuickEvalCounter', serialNumberCounter);
+            updateSerialNumberDisplay();
+
+            // طباعة التقرير
+            setTimeout(() => {
+                window.print();
+
+                // إظهار رسالة نجاح
+                setTimeout(() => {
+                    notifications.show('success',
+                        currentLanguage === 'ar'
+                            ? `تم طباعة التقرير بنجاح! الرقم التسلسلي: VAL-${(serialNumberCounter-1).toString().padStart(6, '0')}`
+                            : `Report printed successfully! Serial: VAL-${(serialNumberCounter-1).toString().padStart(6, '0')}`
+                    );
+
+                    // مسح المسودة بعد الطباعة
+                    localStorage.removeItem('valenciaQuickEvalDraft');
+
+                    // إعادة تعيين النموذج
+                    resetForm();
+                }, 500);
+            }, 500);
+        }
+
+        function showResetConfirmation() {
+            document.getElementById('resetConfirmationModal').style.display = 'flex';
+        }
+
+        function closeResetConfirmation() {
+            document.getElementById('resetConfirmationModal').style.display = 'none';
+        }
+
+        function confirmResetSerial() {
+            serialNumberCounter = 1;
+            localStorage.setItem('valenciaQuickEvalCounter', serialNumberCounter);
+            updateSerialNumberDisplay();
+
+            closeResetConfirmation();
+
+            notifications.show('success',
+                currentLanguage === 'ar'
+                    ? 'تم تصفير الرقم التسلسلي بنجاح'
+                    : 'Serial number reset successfully'
+            );
+        }
+
+        function exportEvaluationData() {
+            try {
+                const data = {
+                    metadata: {
+                        company: 'Valencia Marble & Natural Stone',
+                        system: 'Unified Quick Evaluation System',
+                        exportDate: new Date().toISOString(),
+                        serialNumber: `VAL-${serialNumberCounter.toString().padStart(6, '0')}`
+                    },
+                    evaluation: {}
+                };
+
+                // جمع بيانات الموظف
+                data.evaluation.employee = {
+                    name: document.getElementById('emp-name').value,
+                    id: document.getElementById('emp-id').value,
+                    job: document.getElementById('emp-job').value,
+                    supervisor: document.getElementById('supervisor').value,
+                    department: document.getElementById('department').value,
+                    period: document.getElementById('eval-period').value
+                };
+
+                // جمع التقييمات
+                data.evaluation.ratings = {};
+                document.querySelectorAll('.rating-input').forEach(input => {
+                    if (input.value && input.value !== '0') {
+                        data.evaluation.ratings[input.id] = input.value;
+                    }
+                });
+
+                // جمع الملاحظات
+                data.evaluation.notes = {};
+                document.querySelectorAll('textarea[id^="notes-"]').forEach(textarea => {
+                    if (textarea.value.trim()) {
+                        const id = textarea.id.replace('notes-', '');
+                        data.evaluation.notes[id] = textarea.value;
+                    }
+                });
+
+                // جمع الملاحظات العامة
+                data.evaluation.generalNotes = {
+                    strengths: document.getElementById('strengths').value,
+                    improvements: document.getElementById('improvements').value,
+                    plan: document.getElementById('development-plan').value,
+                    supervisor: document.getElementById('supervisor-notes').value
+                };
+
+                // حساب النتائج
+                const generalScore = calculateGeneralScore(currentDepartment);
+                const specialScore = calculateSpecialScore(currentDepartment);
+                const totalScore = generalScore + specialScore;
+                const percentage = Math.round((totalScore / 50) * 100);
+
+                data.evaluation.scores = {
+                    general: generalScore,
+                    special: specialScore,
+                    total: totalScore,
+                    percentage: percentage
+                };
+
+                // تحويل البيانات إلى JSON
+                const jsonData = JSON.stringify(data, null, 2);
+
+                // إنشاء ملف وتنزيله
+                const blob = new Blob([jsonData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `evaluation_${document.getElementById('emp-id').value || 'unknown'}_${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                notifications.show('success',
+                    currentLanguage === 'ar'
+                        ? 'تم تصدير بيانات التقييم بنجاح'
+                        : 'Evaluation data exported successfully'
+                );
+            } catch (error) {
+                console.error('Error exporting data:', error);
+                notifications.show('error',
+                    currentLanguage === 'ar'
+                        ? 'حدث خطأ أثناء تصدير البيانات'
+                        : 'Error exporting data'
+                );
+            }
+        }
+
+        function resetForm() {
+            if (confirm(currentLanguage === 'ar'
+                ? 'هل أنت متأكد من أنك تريد تفريغ جميع البيانات؟'
+                : 'Are you sure you want to clear all data?')) {
+
+                // إعادة تعيين الحقول
+                document.getElementById('emp-name').value = '';
+                document.getElementById('emp-id').value = '';
+                document.getElementById('emp-job').value = '';
+                document.getElementById('supervisor').value = '';
+                document.getElementById('department').value = '';
+                document.getElementById('eval-period').value = 'اسبوعي';
+
+                // إعادة تعيين التقييمات
+                document.querySelectorAll('.rating-input').forEach(input => {
+                    input.value = '0';
+                });
+
+                // إعادة تعيين العرض المرئي
+                document.querySelectorAll('.rating-option').forEach(option => {
+                    option.classList.remove('selected');
+                });
+
+                // إعادة تعيين الملاحظات
+                document.querySelectorAll('textarea').forEach(textarea => {
+                    textarea.value = '';
+                });
+
+                // إعادة تعيين النتائج
+                calculateAllScores();
+
+                // حذف المسودة
+                localStorage.removeItem('valenciaQuickEvalDraft');
+
+                notifications.show('success',
+                    currentLanguage === 'ar'
+                        ? 'تم تفريغ النموذج بنجاح'
+                        : 'Form cleared successfully'
+                );
+            }
+        }
+
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'ar' ? 'en' : 'ar';
+            applyLanguage();
+
+            notifications.show('info',
+                currentLanguage === 'ar'
+                    ? 'تم تغيير اللغة إلى العربية'
+                    : 'Language changed to English'
+            );
+        }
+
+        // =============================================
+        // دعم الطباعة
+        // =============================================
+        window.addEventListener('beforeprint', function() {
+            // إعداد التنسيقات الخاصة بالطباعة
+            document.querySelectorAll('.no-print').forEach(el => {
+                el.style.display = 'none';
+            });
+
+            // إظهار جميع أقسام التقييم في صفحة واحدة
+            document.querySelectorAll('.quick-evaluation-section').forEach(section => {
+                if (section.id !== `${currentDepartment}-evaluation`) {
+                    section.style.display = 'none';
+                }
+            });
+        });
+
+        window.addEventListener('afterprint', function() {
+            // استعادة التنسيقات الأصلية
+            document.querySelectorAll('.no-print').forEach(el => {
+                el.style.display = '';
+            });
+
+            // إعادة إظهار القسم الحالي فقط
+            document.querySelectorAll('.quick-evaluation-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(`${currentDepartment}-evaluation`).style.display = 'block';
+        });
+
+        // =============================================
+        // تهيئة الصفحة عند التحميل
+        // =============================================
+        window.onload = function() {
+            // ضبط حجم الخط للطباعة
+            const style = document.createElement('style');
+            style.innerHTML = `
+                @media print {
+                    body {
+                        font-size: 8pt !important;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+
+            // التأكد من عرض قسم المبيعات أولاً
+            switchDepartment('sales');
+        };
+    </script>
+</body>
+</html>
