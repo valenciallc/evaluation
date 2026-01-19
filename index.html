@@ -850,30 +850,30 @@
             text-decoration: underline;
         }
 
-        /* ========== PRINT STYLES ========== */
+        /* ========== PRINT STYLES - محسن للصفحة الواحدة ========== */
         @media print {
             @page {
-                size: A4 landscape !important;  /* تغيير إلى الوضع الأفقي لاستيعاب محتوى أكثر */
-                margin: 10mm !important;  /* تقليل الهوامش */
+                size: A4 landscape !important;
+                margin: 2mm !important;  /* تقليل الهوامش بشكل كبير */
             }
 
             body {
                 background: white !important;
                 color: black !important;
-                font-family: 'Times New Roman', serif !important;
-                font-size: 8pt !important;  /* تقليل حجم الخط */
-                line-height: 1.1 !important;
+                font-family: 'Arial Narrow', Arial, sans-serif !important;  /* خط أضيق */
+                font-size: 5pt !important;  /* تقليل حجم الخط بشكل كبير */
+                line-height: 1 !important;
                 margin: 0 !important;
                 padding: 0 !important;
                 width: 100% !important;
-                height: 100% !important;
+                height: auto !important;
             }
 
             .container {
                 max-width: 100% !important;
                 margin: 0 !important;
                 padding: 0 !important;
-                transform: scale(0.95) !important;
+                transform: scale(0.85) !important;  /* تصغير المحتوى */
                 transform-origin: top center !important;
             }
 
@@ -895,46 +895,46 @@
                 display: none !important;
             }
 
-            /* ========== PRINT REPORT HEADER ========== */
+            /* ========== PRINT REPORT HEADER - مضغوط ========== */
             .print-report-header {
                 display: block !important;
                 text-align: center;
-                margin-bottom: 10px !important;
-                padding-bottom: 8px !important;
-                border-bottom: 2px solid #000;
+                margin-bottom: 3mm !important;
+                padding-bottom: 2mm !important;
+                border-bottom: 1px solid #000;
                 page-break-after: avoid;
             }
 
             .print-report-header h1 {
-                font-size: 16pt !important;
+                font-size: 10pt !important;  /* تصغير العنوان */
                 color: #000;
-                margin-bottom: 5px !important;
+                margin-bottom: 1mm !important;
                 font-weight: bold;
             }
 
             .print-report-header .company-name {
-                font-size: 10pt !important;
+                font-size: 7pt !important;
                 color: #333;
-                margin-bottom: 10px !important;
+                margin-bottom: 2mm !important;
             }
 
             .print-info-table {
                 width: 100% !important;
                 border-collapse: collapse;
-                margin: 8px 0 !important;
-                font-size: 8pt !important;
+                margin: 1mm 0 !important;
+                font-size: 5pt !important;  /* تصغير جدول المعلومات */
                 page-break-inside: avoid;
             }
 
             .print-info-table td {
-                padding: 4px 6px !important;
-                border: 1px solid #000;
+                padding: 1mm 1.5mm !important;
+                border: 0.5px solid #000;
                 text-align: center;
             }
 
             .print-info-table th {
-                padding: 4px 6px !important;
-                border: 1px solid #000;
+                padding: 1mm 1.5mm !important;
+                border: 0.5px solid #000;
                 background-color: #f0f0f0;
                 font-weight: bold;
                 text-align: center;
@@ -944,21 +944,21 @@
             .company-logo-container {
                 display: block !important;
                 position: absolute;
-                top: 10px;
-                left: 10px;
+                top: 2mm !important;
+                left: 2mm !important;
             }
 
             .company-logo {
-                width: 60px;
-                height: 60px;
+                width: 15mm !important;  /* تصغير الشعار */
+                height: 15mm !important;
                 border-radius: 50%;
                 background: white !important;
-                border: 2px solid #000 !important;
+                border: 0.5px solid #000 !important;
                 box-shadow: none !important;
             }
 
             .company-logo img {
-                padding: 5px !important;
+                padding: 1mm !important;
             }
 
             .logo-upload-btn {
@@ -972,7 +972,7 @@
             .notes-summary {
                 display: block !important;
                 page-break-inside: avoid !important;
-                margin: 5mm 0 !important;
+                margin: 2mm 0 !important;
                 padding: 0 !important;
                 box-shadow: none !important;
                 border-radius: 0 !important;
@@ -984,21 +984,20 @@
 
             /* ========== COMPACT SECTION CARDS ========== */
             .section-card {
-                margin: 0 0 8px 0 !important;
-                border: 1px solid #000 !important;
+                margin: 0 0 2mm 0 !important;
+                border: 0.5px solid #000 !important;
                 border-radius: 0 !important;
                 box-shadow: none !important;
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
-                max-height: none !important;
             }
 
             .section-title {
                 color: #000 !important;
-                font-size: 10pt !important;
+                font-size: 6pt !important;  /* تصغير عنوان القسم */
                 font-weight: bold !important;
-                padding: 5px 6px !important;
-                border-bottom: 1px solid #000 !important;
+                padding: 1mm 1.5mm !important;
+                border-bottom: 0.5px solid #000 !important;
                 background-color: #f0f0f0 !important;
                 margin: 0 !important;
                 page-break-after: avoid !important;
@@ -1007,161 +1006,191 @@
             /* ========== COMPACT CRITERIA TABLES ========== */
             .criteria-table {
                 width: 100% !important;
-                border: 1px solid #000 !important;
-                font-size: 7pt !important;
+                border: 0.5px solid #000 !important;
+                font-size: 4pt !important;  /* تصغير جدول المعايير */
                 page-break-inside: auto !important;
                 border-collapse: collapse !important;
                 margin: 0 !important;
+                table-layout: fixed !important;  /* تثبيت عرض الأعمدة */
             }
 
             .criteria-table th {
                 background: #f0f0f0 !important;
                 color: #000 !important;
-                border: 1px solid #000 !important;
-                padding: 3px 4px !important;
+                border: 0.5px solid #000 !important;
+                padding: 0.5mm 0.75mm !important;
                 font-weight: bold !important;
                 text-align: center !important;
-                font-size: 7pt !important;
-                height: auto !important;
+                font-size: 4pt !important;
+                height: 4mm !important;  /* تحديد ارتفاع ثابت */
             }
 
             .criteria-table td {
-                border: 1px solid #666 !important;
-                padding: 3px 4px !important;
-                font-size: 7pt !important;
+                border: 0.5px solid #666 !important;
+                padding: 0.5mm 0.75mm !important;
+                font-size: 4pt !important;
                 text-align: center !important;
                 vertical-align: middle !important;
-                height: auto !important;
+                height: 3.5mm !important;  /* تحديد ارتفاع ثابت للصفوف */
                 line-height: 1 !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
             }
 
             .criteria-name {
                 color: #000 !important;
                 font-weight: bold !important;
                 text-align: right !important;
-                font-size: 7pt !important;
+                font-size: 4pt !important;
             }
 
             .criteria-description {
                 color: #666 !important;
-                font-size: 6pt !important;
+                font-size: 3pt !important;  /* تصغير الوصف */
                 text-align: right !important;
-                display: none !important;  /* إخفاء الوصف لتقليل المساحة */
+                display: none !important;  /* إخفاء الوصف لتوفير المساحة */
             }
 
             .weight-badge {
                 background: #f8f8f8 !important;
                 color: #000 !important;
-                border: 1px solid #666 !important;
-                padding: 1px 3px !important;
-                border-radius: 1px !important;
+                border: 0.5px solid #666 !important;
+                padding: 0.25mm 0.5mm !important;
+                border-radius: 0 !important;
                 font-weight: bold !important;
                 display: inline-block !important;
-                min-width: 20px !important;
-                font-size: 7pt !important;
+                min-width: 4mm !important;  /* تصغير الوزن */
+                font-size: 4pt !important;
             }
 
             .calculated-value {
                 background: #f8f8f8 !important;
                 color: #000 !important;
-                border: 1px solid #666 !important;
-                padding: 1px 3px !important;
-                border-radius: 1px !important;
+                border: 0.5px solid #666 !important;
+                padding: 0.25mm 0.5mm !important;
+                border-radius: 0 !important;
                 font-weight: bold !important;
                 display: inline-block !important;
-                font-size: 7pt !important;
-                min-width: 30px !important;
+                font-size: 4pt !important;
+                min-width: 5mm !important;
             }
 
             /* إظهار القيم المختارة للطباعة */
             .printed-rating {
                 display: inline !important;
                 font-weight: bold;
-                font-size: 8pt !important;
-                padding: 0 2px !important;
+                font-size: 5pt !important;
+                padding: 0.25mm 0.5mm !important;
                 background-color: #f0f0f0;
-                border-radius: 1px;
-                border: 1px solid #666;
-                margin-right: 2px !important;
+                border-radius: 0;
+                border: 0.5px solid #666;
+                margin-right: 0.5mm !important;
+            }
+
+            /* إخفاء أعمدة غير ضرورية */
+            .criteria-table th:nth-child(2),  /* إخفاء عمود الوصف */
+            .criteria-table td:nth-child(2),
+            .criteria-table th:nth-child(5),  /* إخفاء عمود القيمة المحسوبة */
+            .criteria-table td:nth-child(5) {
+                display: none !important;
+            }
+
+            /* تحديد عرض الأعمدة الباقية */
+            .criteria-table th:nth-child(1),
+            .criteria-table td:nth-child(1) {
+                width: 60% !important;  /* اسم المعيار */
+                text-align: right !important;
+            }
+
+            .criteria-table th:nth-child(3),
+            .criteria-table td:nth-child(3) {
+                width: 20% !important;  /* الوزن */
+                text-align: center !important;
+            }
+
+            .criteria-table th:nth-child(4),
+            .criteria-table td:nth-child(4) {
+                width: 20% !important;  /* التقييم */
+                text-align: center !important;
             }
 
             /* ========== COMPACT SUMMARY ========== */
             .summary-container {
                 background: #f0f0f0 !important;
                 color: black !important;
-                border: 1px solid #000 !important;
+                border: 0.5px solid #000 !important;
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
-                padding: 8px !important;
-                margin: 8px 0 !important;
+                padding: 2mm !important;
+                margin: 2mm 0 !important;
             }
 
             .summary-grid {
                 display: grid !important;
                 grid-template-columns: repeat(4, 1fr) !important;
-                gap: 8px !important;
+                gap: 1mm !important;
                 text-align: center;
             }
 
             .summary-item {
                 background: white !important;
-                border: 1px solid #000 !important;
+                border: 0.5px solid #000 !important;
                 color: black !important;
-                padding: 6px !important;
+                padding: 1mm !important;
                 margin: 0 !important;
             }
 
             .summary-title {
                 color: #000 !important;
-                font-size: 10pt !important;
-                margin-bottom: 8px !important;
+                font-size: 6pt !important;
+                margin-bottom: 1mm !important;
             }
 
             .summary-label {
-                font-size: 7pt !important;
-                margin-bottom: 3px !important;
+                font-size: 4pt !important;
+                margin-bottom: 0.5mm !important;
             }
 
             .summary-value {
-                font-size: 12pt !important;
+                font-size: 8pt !important;
                 font-weight: 700 !important;
-                margin: 3px 0 !important;
+                margin: 0.5mm 0 !important;
             }
 
             .summary-subtext {
-                font-size: 6pt !important;
+                font-size: 3pt !important;
             }
 
             /* ========== COMPACT TOTAL SCORE ========== */
             .total-score-container {
                 background: #e9ecef !important;
                 color: black !important;
-                border: 1px solid #000 !important;
+                border: 0.5px solid #000 !important;
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
-                padding: 12px !important;
-                margin: 8px 0 !important;
+                padding: 2mm !important;
+                margin: 2mm 0 !important;
                 text-align: center;
             }
 
             .total-score-label {
-                font-size: 9pt !important;
-                margin-bottom: 3px !important;
+                font-size: 5pt !important;
+                margin-bottom: 0.5mm !important;
             }
 
             .total-score-value {
-                font-size: 20pt !important;
+                font-size: 12pt !important;
                 font-weight: 800 !important;
-                margin: 3px 0 !important;
+                margin: 0.5mm 0 !important;
             }
 
             .total-score-grade {
-                font-size: 10pt !important;
+                font-size: 6pt !important;
                 font-weight: 600 !important;
-                margin-top: 3px !important;
-                padding: 3px 8px !important;
+                margin-top: 0.5mm !important;
+                padding: 0.5mm 1.5mm !important;
                 background: rgba(255, 255, 255, 0.5);
-                border-radius: 15px;
+                border-radius: 10px;
                 display: inline-block;
             }
 
@@ -1173,84 +1202,87 @@
             .notes-summary {
                 background: #f0f0f0 !important;
                 color: black !important;
-                border: 1px solid #000 !important;
+                border: 0.5px solid #000 !important;
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
-                padding: 8px !important;
-                margin: 8px 0 !important;
+                padding: 1.5mm !important;
+                margin: 2mm 0 !important;
+                max-height: 15mm !important;  /* تحديد ارتفاع أقصى للملاحظات */
+                overflow: hidden !important;
             }
 
             .notes-summary-title {
                 color: #000 !important;
-                font-size: 10pt !important;
-                margin-bottom: 6px !important;
+                font-size: 6pt !important;
+                margin-bottom: 1mm !important;
             }
 
             .printed-notes {
                 display: block !important;
                 background: white !important;
-                border: 1px solid #000 !important;
-                padding: 4px !important;
-                margin-top: 3px !important;
-                margin-bottom: 6px !important;
-                min-height: 30px !important;
-                max-height: 60px !important;
+                border: 0.5px solid #000 !important;
+                padding: 0.75mm !important;
+                margin-top: 0.5mm !important;
+                margin-bottom: 0.5mm !important;
+                min-height: 4mm !important;
+                max-height: 5mm !important;  /* تحديد ارتفاع ثابت للملاحظات */
                 white-space: pre-wrap !important;
-                font-size: 7pt !important;
+                font-size: 4pt !important;
                 overflow: hidden !important;
+                line-height: 1.2 !important;
             }
 
             /* ========== COMPACT SIGNATURES ========== */
             .print-signatures {
                 display: block !important;
-                margin-top: 15px !important;
-                border-top: 2px solid #000;
-                padding-top: 8px;
+                margin-top: 3mm !important;
+                border-top: 0.5px solid #000;
+                padding-top: 1.5mm;
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
             }
 
             .print-signatures h3 {
                 text-align: center;
-                margin-bottom: 10px !important;
-                font-size: 10pt !important;
+                margin-bottom: 2mm !important;
+                font-size: 6pt !important;
                 font-weight: bold;
             }
 
             .signature-box {
-                border: 1px solid #000;
-                padding: 6px;
-                height: 60px !important;
-                margin-top: 6px !important;
+                border: 0.5px solid #000;
+                padding: 1mm;
+                height: 12mm !important;  /* تصغير ارتفاع التوقيعات */
+                margin-top: 1mm !important;
                 text-align: center;
                 position: relative;
                 page-break-inside: avoid !important;
             }
 
             .signature-line {
-                border-top: 1px solid #000;
-                margin-top: 25px !important;
+                border-top: 0.5px solid #000;
+                margin-top: 5mm !important;
                 width: 100%;
                 position: absolute;
-                bottom: 20px !important;
+                bottom: 3mm !important;
                 left: 0;
             }
 
             .signature-date {
                 position: absolute;
-                bottom: 8px !important;
+                bottom: 1mm !important;
                 left: 50%;
                 transform: translateX(-50%);
-                font-size: 7pt !important;
+                font-size: 3pt !important;
             }
 
             .signature-name {
                 position: absolute;
-                bottom: 30px !important;
+                bottom: 5mm !important;
                 left: 50%;
                 transform: translateX(-50%);
                 font-weight: bold;
-                font-size: 8pt !important;
+                font-size: 4pt !important;
             }
 
             /* ========== PAGE BREAK CONTROL ========== */
@@ -1275,21 +1307,10 @@
 
             /* تجنب تقسيم الصفوف في الجداول */
             .criteria-table tr {
-                height: 18px !important;
-                max-height: 18px !important;
+                height: 3.5mm !important;
+                max-height: 3.5mm !important;
                 page-break-inside: avoid !important;
             }
-
-            /* ========== COMPRESS TABLE LAYOUT ========== */
-            .criteria-table th:nth-child(2),  /* إخفاء عمود الوصف */
-            .criteria-table td:nth-child(2) {
-                display: none !important;
-            }
-
-            .criteria-table th:nth-child(1) { width: 40% !important; }
-            .criteria-table th:nth-child(3) { width: 15% !important; }
-            .criteria-table th:nth-child(4) { width: 20% !important; }
-            .criteria-table th:nth-child(5) { width: 25% !important; }
 
             /* ========== REMOVE UNNECESSARY SPACING ========== */
             * {
@@ -1299,18 +1320,19 @@
                 padding-bottom: 0 !important;
             }
 
-            /* ========== PRINT WATERMARK ========== */
+            /* ========== PRINT WATERMARK - أصغر ========== */
             body::after {
-                content: "Valencia Marble & Natural Stone Company";
+                content: "Valencia Marble";
                 position: fixed;
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%) rotate(-45deg);
-                font-size: 30pt !important;  /* تقليل حجم الـ watermark */
-                color: rgba(0, 0, 0, 0.03) !important;  /* جعله أكثر خفوتًا */
+                font-size: 20pt !important;  /* تصغير الـ watermark */
+                color: rgba(0, 0, 0, 0.02) !important;  /* جعله أكثر خفوتًا */
                 z-index: -1;
                 white-space: nowrap;
                 pointer-events: none;
+                opacity: 0.3;
             }
 
             /* ========== FORCE SINGLE PAGE ========== */
@@ -1322,15 +1344,31 @@
             /* ========== FLEXIBLE ROW HEIGHTS ========== */
             .criteria-table td {
                 height: auto !important;
-                min-height: 18px !important;
+                min-height: 3.5mm !important;
             }
 
             /* ========== COMPACT LAYOUT FOR MULTIPLE SECTIONS ========== */
             .sections-container {
                 display: grid !important;
                 grid-template-columns: 1fr !important;
-                gap: 4px !important;
+                gap: 1mm !important;
                 margin: 0 !important;
+            }
+
+            /* ========== إخفاء الصور والخلفيات غير الضرورية ========== */
+            * {
+                background-image: none !important;
+            }
+            
+            /* ========== تجنب الانقسام بين الجداول الكبيرة ========== */
+            .section-card {
+                max-height: 90mm !important; /* تحديد ارتفاع أقصى لكل قسم */
+                overflow: hidden !important;
+            }
+            
+            /* ========== تقليل عدد الصفوف المعروضة في الجداول الكبيرة ========== */
+            .criteria-table tbody tr:nth-child(n+20) { /* عرض أول 20 صف فقط */
+                display: none !important;
             }
         }
 
@@ -1637,7 +1675,7 @@
                 </div>
                 <div class="instruction-item">
                     <strong id="instructionConfidentialTitle">سرية المعلومات:</strong>
-                    <span id="instructionConfidentialText">جميع نتائج التقييم سرية وتحفظ في سجلات الموارد البشرية</span>
+                    <span id="instructionConfidentialText">جمين نتائج التقييم سرية وتحفظ في سجلات الموارد البشرية</span>
                 </div>
                 <div class="instruction-item">
                     <strong id="instructionAutoSendTitle">الإرسال التلقائي:</strong>
@@ -2784,95 +2822,182 @@
                 },
 
                 marketing: {
-    name: { ar: '📱 قسم التسويق الإلكتروني والسوشيال ميديا', en: '📱 Digital Marketing and Social Media Department' },
-    manager: 'أمين أحمد حجازي',
-    teams: {
-        photographer: {
-            name: { ar: 'فريق التصوير', en: 'Photography Team' },
-            supervisor: 'أمين أحمد حجازي',
-            employees: [
-                { 
-                    id: 'ammar', 
-                    name: 'عمار فادي عوض', 
-                    position: { ar: 'مصور', en: 'Photographer' }
-                }
-            ],
-            criteria: [
-                { id: 'photo_quality', name: { ar: 'جودة التصوير', en: 'Photo Quality' }, weight: 8 },
-                { id: 'content_creativity', name: { ar: 'التنوع والإبداع في المحتوى', en: 'Content Variety and Creativity' }, weight: 7 },
-                { id: 'production_speed', name: { ar: 'سرعة الإنتاج', en: 'Production Speed' }, weight: 7 },
-                { id: 'coordination', name: { ar: 'التنسيق مع فريق المونتاج والتسويق', en: 'Coordination with Editing and Marketing Team' }, weight: 6 },
-                { id: 'peak_hours', name: { ar: 'التواجد المستمر في اوقات الذروة', en: 'Continuous Presence During Peak Hours' }, weight: 6 }
-            ]
-        },
-        
-        editor: {
-            name: { ar: 'فريق المونتاج', en: 'Editing Team' },
-            supervisor: 'أمين أحمد حجازي',
-            employees: [
-                { 
-                    id: 'samer', 
-                    name: 'سامر جنيد', 
-                    position: { ar: 'مونتاج', en: 'Video Editor' }
-                }
-            ],
-            criteria: [
-                { 
-                    id: 'editing_quality', 
-                    name: { ar: 'جودة المونتاج', en: 'Editing Quality' },
-                    description: { ar: 'التصاميم والإعلانات', en: 'Designs and advertisements' }, 
-                    weight: 8 
-                },
-                { id: 'delivery_speed', name: { ar: 'سرعة التسليم', en: 'Delivery Speed' }, weight: 7 },
-                { id: 'editing_creativity', name: { ar: 'الإبداع في التحرير', en: 'Creativity in Editing' }, weight: 7 },
-                { id: 'visual_identity', name: { ar: 'الالتزام بالهوية البصرية', en: 'Adherence to Visual Identity' }, weight: 6 }
-            ]
-        },
-        
-        designer: {
-            name: { ar: 'فريق التصميم والإعلانات', en: 'Design and Advertising Team' },
-            supervisor: 'أمين أحمد حجازي',
-            employees: [
-                { 
-                    id: 'rabah', 
-                    name: 'رباح الحموي', 
-                    position: { ar: 'مصمم إعلان/ناشر/متفاعل', en: 'Ad Designer/Publisher/Engager' }
-                }
-            ],
-            criteria: [
-                { id: 'campaign_management', name: { ar: 'إدارة الحملات الإعلانية المدفوعة', en: 'Paid Advertising Campaign Management' }, weight: 7 },
-                { id: 'interaction', name: { ar: 'التفاعل مع المتابعين والرد على الرسائل', en: 'Interaction with Followers and Message Response' }, weight: 8 },
-                { id: 'publishing_schedule', name: { ar: 'الالتزام بجدول النشر في أوقات الذروة', en: 'Publishing Schedule and Timeliness' }, weight: 7 },
-                { id: 'off_hours_response', name: { ar: 'الرد خارج اوقات الدوام', en: 'Response Outside Working Hours' }, weight: 7 },
-                { id: 'page_coordination', name: { ar: 'تنسيق الصفحات والمحتوى', en: 'Page and Publication Coordination' }, weight: 6 }
-            ]
-        },
-        
-        social_media: {
-            name: { ar: 'فريق السوشيال ميديا', en: 'Social Media Team' },
-            supervisor: 'أمين أحمد حجازي',
-            employees: [
-                { 
-                    id: 'menna_allah', 
-                    name: 'منه الله علاء', 
-                    position: { ar: 'سوشيال ميديا', en: 'Social Media Specialist' }
-                },
-                { 
-                    id: 'rania', 
-                    name: 'رانيا فريد', 
-                    position: { ar: 'سوشيال ميديا', en: 'Social Media Specialist' }
-                }
-            ],
-            criteria: [
-                { id: 'campaign_management', name: { ar: 'مستوى المعلومات عن الدولة وكيفية الرد والتعامل مع شعبها', en: 'Paid Advertising Campaign Management' }, weight: 7 },
-                { id: 'interaction', name: { ar: 'التفاعل مع المتابعين والرد على الرسائل', en: 'Interaction with Followers and Message Response' }, weight: 8 },
-                { id: 'publishing_schedule', name: { ar: 'مدى الجاهزيه بأوقات الذروة و العروض والضغط', en: 'Publishing Schedule and Timeliness' }, weight: 7 },
-                { id: 'off_hours_response', name: { ar: 'الرد خارج اوقات الدوام', en: 'Response Outside Working Hours' }, weight: 7 },
-                { id: 'page_coordination', name: { ar: 'مستوى معلوماتهم و خبرتهم في مجال أعمال الشركة', en: 'Page and Publication Coordination' }, weight: 6 }
-            ]
-        }
-    }
-},
+                    name: { ar: '📱 قسم التسويق الإلكتروني والسوشيال ميديا', en: '📱 Digital Marketing and Social Media Department' },
+                    manager: 'أمين أحمد حجازي',
+                    teams: {
+                        photographer: {
+                            name: { ar: 'فريق التصوير', en: 'Photography Team' },
+                            supervisor: 'أمين أحمد حجازي',
+                            employees: [
+                                {
+                                    id: 'ammar',
+                                    name: 'عمار فادي عوض',
+                                    position: { ar: 'مصور', en: 'Photographer' }
+                                }
+                            ],
+                            criteria: [
+                                {
+                                    id: 'photo_quality',
+                                    name: { ar: 'جودة التصوير', en: 'Photo Quality' },
+                                    weight: 8
+                                },
+                                {
+                                    id: 'content_creativity',
+                                    name: { ar: 'التنوع والإبداع في المحتوى', en: 'Content Variety and Creativity' },
+                                    weight: 7
+                                },
+                                {
+                                    id: 'production_speed',
+                                    name: { ar: 'سرعة الإنتاج', en: 'Production Speed' },
+                                    weight: 7
+                                },
+                                {
+                                    id: 'coordination',
+                                    name: { ar: 'التنسيق مع فريق المونتاج والتسويق', en: 'Coordination with Editing and Marketing Team' },
+                                    weight: 6
+                                },
+                                {
+                                    id: 'peak_hours',
+                                    name: { ar: 'التواجد المستمر في اوقات الذروة', en: 'Continuous Presence During Peak Hours' },
+                                    weight: 6
+                                }
+                            ]
+                        },
+
+                        editor: {
+                            name: { ar: 'فريق المونتاج', en: 'Editing Team' },
+                            supervisor: 'أمين أحمد حجازي',
+                            employees: [
+                                {
+                                    id: 'samer',
+                                    name: 'سامر جنيد',
+                                    position: { ar: 'مونتاج', en: 'Video Editor' }
+                                }
+                            ],
+                            criteria: [
+                                {
+                                    id: 'editing_quality',
+                                    name: { ar: 'جودة المونتاج', en: 'Editing Quality' },
+                                    description: { ar: 'التصاميم والإعلانات', en: 'Designs and advertisements' },
+                                    weight: 8
+                                },
+                                {
+                                    id: 'delivery_speed',
+                                    name: { ar: 'سرعة التسليم', en: 'Delivery Speed' },
+                                    weight: 7
+                                },
+                                {
+                                    id: 'editing_creativity',
+                                    name: { ar: 'الإبداع في التحرير', en: 'Creativity in Editing' },
+                                    weight: 7
+                                },
+                                {
+                                    id: 'visual_identity',
+                                    name: { ar: 'الالتزام بالهوية البصرية', en: 'Adherence to Visual Identity' },
+                                    weight: 6
+                                }
+                            ]
+                        },
+
+                        designer: {
+                            name: { ar: 'فريق التصميم والإعلانات', en: 'Design and Advertising Team' },
+                            supervisor: 'أمين أحمد حجازي',
+                            employees: [
+                                {
+                                    id: 'rabah',
+                                    name: 'رباح الحموي',
+                                    position: { ar: 'مصمم إعلان/الناشر', en: 'Ad Designer/Publisher' }
+                                }
+                            ],
+                            criteria: [
+                                {
+                                    id: 'ad_design_quality',
+                                    name: { ar: 'جودة تصميم الإعلانات', en: 'Advertisement Design Quality' },
+                                    description: { ar: 'الإبداع، الجاذبية البصرية', en: 'Creativity, visual appeal' },
+                                    weight: 9
+                                },
+                                {
+                                    id: 'publishing_timing',
+                                    name: { ar: 'التوقيت المناسب للنشر', en: 'Appropriate Publishing Timing' },
+                                    description: { ar: 'اختيار أوقات الذروة', en: 'Choosing peak hours' },
+                                    weight: 8
+                                },
+                                {
+                                    id: 'content_strategy',
+                                    name: { ar: 'التخطيط الاستراتيجي للمحتوى', en: 'Content Strategic Planning' },
+                                    description: { ar: 'تنظيم خطة المحتوى', en: 'Organizing content plan' },
+                                    weight: 8
+                                },
+                                {
+                                    id: 'brand_consistency',
+                                    name: { ar: 'الالتزام بالهوية البصرية للعلامة التجارية', en: 'Brand Visual Identity Consistency' },
+                                    description: { ar: 'توحيد الألوان والخطوط', en: 'Unifying colors and fonts' },
+                                    weight: 7
+                                },
+                                {
+                                    id: 'ad_performance',
+                                    name: { ar: 'متابعة أداء الإعلانات', en: 'Advertisement Performance Tracking' },
+                                    description: { ar: 'تحليل النتائج والتعديل', en: 'Analyzing results and adjustments' },
+                                    weight: 8
+                                },
+                                {
+                                    id: 'creative_ideas',
+                                    name: { ar: 'تقديم أفكار إبداعية جديدة', en: 'Providing New Creative Ideas' },
+                                    weight: 7
+                                },
+                                {
+                                    id: 'deadline_adherence',
+                                    name: { ar: 'الالتزام بمواعيد تسليم التصاميم', en: 'Adherence to Design Delivery Deadlines' },
+                                    weight: 7
+                                }
+                            ]
+                        },
+
+                        social_media: {
+                            name: { ar: 'فريق السوشيال ميديا', en: 'Social Media Team' },
+                            supervisor: 'أمين أحمد حجازي',
+                            employees: [
+                                {
+                                    id: 'menna_allah',
+                                    name: 'منه الله علاء',
+                                    position: { ar: 'سوشيال ميديا', en: 'Social Media Specialist' }
+                                },
+                                {
+                                    id: 'rania',
+                                    name: 'رانيا فريد',
+                                    position: { ar: 'سوشيال ميديا', en: 'Social Media Specialist' }
+                                }
+                            ],
+                            criteria: [
+                                {
+                                    id: 'country_knowledge',
+                                    name: { ar: 'مستوى المعلومات عن الدولة وكيفية الرد والتعامل مع شعبها', en: 'Country Knowledge and Interaction Skills' },
+                                    weight: 7
+                                },
+                                {
+                                    id: 'followers_interaction',
+                                    name: { ar: 'التفاعل مع المتابعين والرد على الرسائل', en: 'Interaction with Followers and Message Response' },
+                                    weight: 8
+                                },
+                                {
+                                    id: 'peak_readiness',
+                                    name: { ar: 'مدى الجاهزيه بأوقات الذروة والعروض والضغط', en: 'Readiness During Peak Hours, Offers and Pressure' },
+                                    weight: 7
+                                },
+                                {
+                                    id: 'off_hours_availability',
+                                    name: { ar: 'الرد خارج اوقات الدوام', en: 'Response Outside Working Hours' },
+                                    weight: 7
+                                },
+                                {
+                                    id: 'business_knowledge',
+                                    name: { ar: 'مستوى معلوماتهم وخبرتهم في مجال أعمال الشركة', en: 'Business Knowledge and Experience' },
+                                    weight: 6
+                                }
+                            ]
+                        }
+                    }
+        };
 
                 projects: {
                     name: { ar: '🔨 قسم المشاريع', en: '🔨 Projects Department' },
@@ -3857,29 +3982,55 @@
                 // تحديث التقييمات المطبوعة
                 this.updatePrintedRatings();
 
-                // تقليل عدد الصفوف المعروضة في الجداول إذا كانت كثيرة
-                this.compressTablesForPrint();
+                // تحسين التنسيق للطباعة
+                this.optimizeForPrint();
             }
 
-            // دالة جديدة لضغط الجداول للطباعة
-            compressTablesForPrint() {
-                // تقليل المسافات في الجداول
+            // دالة جديدة لتحسين التنسيق للطباعة
+            optimizeForPrint() {
+                // إخفاء الوصف من الجداول
                 const tables = document.querySelectorAll('.criteria-table');
                 tables.forEach(table => {
-                    // إخفاء الوصف في الطباعة
                     const descriptionCells = table.querySelectorAll('td:nth-child(2), th:nth-child(2)');
                     descriptionCells.forEach(cell => {
                         cell.style.display = 'none';
                     });
                     
-                    // تقليل ارتفاع الصفوف
+                    // إخفاء عمود القيمة المحسوبة
+                    const valueCells = table.querySelectorAll('td:nth-child(5), th:nth-child(5)');
+                    valueCells.forEach(cell => {
+                        cell.style.display = 'none';
+                    });
+                    
+                    // تقليل حجم الصفوف
                     const rows = table.querySelectorAll('tr');
                     rows.forEach(row => {
-                        row.style.height = '20px';
-                        row.style.minHeight = '20px';
-                        row.style.maxHeight = '20px';
+                        row.style.height = '15px';
+                        row.style.minHeight = '15px';
+                        row.style.maxHeight = '15px';
+                        row.style.lineHeight = '1';
                     });
                 });
+
+                // إذا كان عدد المعايير كبيراً، تقليله للطباعة
+                const criteriaRows = document.querySelectorAll('.criteria-table tbody tr');
+                if (criteriaRows.length > 15) {
+                    // إخفاء الصفوف الزائدة مع إظهار إشعار
+                    for (let i = 15; i < criteriaRows.length; i++) {
+                        criteriaRows[i].style.display = 'none';
+                    }
+                    
+                    // إضافة صف للإشعار
+                    const noticeRow = document.createElement('tr');
+                    noticeRow.innerHTML = `
+                        <td colspan="5" style="text-align: center; font-style: italic; font-size: 8pt;">
+                            ${this.state.currentLanguage === 'ar' ? 
+                              '...والمزيد من المعايير (تم عرض 15 معياراً فقط للطباعة)' : 
+                              '...and more criteria (showing 15 criteria only for printing)'}
+                        </td>
+                    `;
+                    criteriaRows[14].parentNode.insertBefore(noticeRow, criteriaRows[14].nextSibling);
+                }
             }
 
             updatePrintedRatings() {
