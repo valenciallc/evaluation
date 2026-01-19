@@ -2786,11 +2786,10 @@
                 marketing: {
     name: { ar: '📱 قسم التسويق الإلكتروني والسوشيال ميديا', en: '📱 Digital Marketing and Social Media Department' },
     manager: 'أمين أحمد حجازي',
-    
-                    departments: {
-       
+    teams: {
         photographer: {
-            title: { ar: 'فريق التصوير', en: 'Photography Team' },
+            name: { ar: 'فريق التصوير', en: 'Photography Team' },
+            supervisor: 'أمين أحمد حجازي',
             employees: [
                 { 
                     id: 'ammar', 
@@ -2808,7 +2807,8 @@
         },
         
         editor: {
-            title: { ar: 'فريق المونتاج', en: 'Editing Team' },
+            name: { ar: 'فريق المونتاج', en: 'Editing Team' },
+            supervisor: 'أمين أحمد حجازي',
             employees: [
                 { 
                     id: 'samer', 
@@ -2830,7 +2830,8 @@
         },
         
         designer: {
-            title: { ar: 'فريق التصميم والإعلانات', en: 'Design and Advertising Team' },
+            name: { ar: 'فريق التصميم والإعلانات', en: 'Design and Advertising Team' },
+            supervisor: 'أمين أحمد حجازي',
             employees: [
                 { 
                     id: 'rabah', 
@@ -2848,7 +2849,8 @@
         },
         
         social_media: {
-            title: { ar: 'فريق السوشيال ميديا', en: 'Social Media Team' },
+            name: { ar: 'فريق السوشيال ميديا', en: 'Social Media Team' },
+            supervisor: 'أمين أحمد حجازي',
             employees: [
                 { 
                     id: 'menna_allah', 
@@ -2870,8 +2872,7 @@
             ]
         }
     }
-}
-                },
+},
 
                 projects: {
                     name: { ar: '🔨 قسم المشاريع', en: '🔨 Projects Department' },
@@ -3565,13 +3566,13 @@
                     }
                 } else if (deptId === 'marketing') {
                     if (employeeText.includes('مصور') || employeeText.includes('Photographer')) {
-                        return dept.criteria.photographer || [];
+                        return dept.teams.photographer.criteria || [];
                     } else if (employeeText.includes('مونتاج') || employeeText.includes('Video Editor')) {
-                        return dept.criteria.editor || [];
-                    } else if (employeeText.includes('مصمم') || employeeText.includes('Designer')) {
-                        return dept.criteria.designer || [];
-                    } else if (employeeText.includes('السوشيال ميديا') || employeeText.includes('Social Media Specialist')) {
-                        return dept.criteria.Social Media Specialist || [];
+                        return dept.teams.editor.criteria || [];
+                    } else if (employeeText.includes('مصمم إعلان') || employeeText.includes('Ad Designer')) {
+                        return dept.teams.designer.criteria || [];
+                    } else if (employeeText.includes('سوشيال ميديا') || employeeText.includes('Social Media')) {
+                        return dept.teams.social_media.criteria || [];
                     }
                 } else if (deptId === 'projects') {
                     if (employeeText.includes('فورمان') || employeeText.includes('Foreman')) {
