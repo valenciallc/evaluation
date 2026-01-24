@@ -853,15 +853,15 @@
         /* ========== PRINT STYLES ========== */
         @media print {
             @page {
-                size: A4 landscape !important;  /* تغيير إلى الوضع الأفقي لاستيعاب محتوى أكثر */
-                margin: 10mm !important;  /* تقليل الهوامش */
+                size: A4 landscape !important;
+                margin: 8mm !important;
             }
 
             body {
                 background: white !important;
                 color: black !important;
                 font-family: 'Times New Roman', serif !important;
-                font-size: 8pt !important;  /* تقليل حجم الخط */
+                font-size: 9pt !important;
                 line-height: 1.1 !important;
                 margin: 0 !important;
                 padding: 0 !important;
@@ -873,7 +873,7 @@
                 max-width: 100% !important;
                 margin: 0 !important;
                 padding: 0 !important;
-                transform: scale(0.95) !important;
+                transform: scale(0.98) !important;
                 transform-origin: top center !important;
             }
 
@@ -891,7 +891,8 @@
             .section-points,
             .header-icons,
             .language-switcher,
-            .notes-section {
+            .notes-section,
+            .logo-upload-btn {
                 display: none !important;
             }
 
@@ -899,41 +900,41 @@
             .print-report-header {
                 display: block !important;
                 text-align: center;
-                margin-bottom: 10px !important;
-                padding-bottom: 8px !important;
-                border-bottom: 2px solid #000;
+                margin-bottom: 5px !important;
+                padding-bottom: 5px !important;
+                border-bottom: 1px solid #000;
                 page-break-after: avoid;
             }
 
             .print-report-header h1 {
-                font-size: 16pt !important;
+                font-size: 14pt !important;
                 color: #000;
-                margin-bottom: 5px !important;
+                margin-bottom: 3px !important;
                 font-weight: bold;
             }
 
             .print-report-header .company-name {
-                font-size: 10pt !important;
+                font-size: 9pt !important;
                 color: #333;
-                margin-bottom: 10px !important;
+                margin-bottom: 5px !important;
             }
 
             .print-info-table {
                 width: 100% !important;
                 border-collapse: collapse;
-                margin: 8px 0 !important;
+                margin: 5px 0 !important;
                 font-size: 8pt !important;
                 page-break-inside: avoid;
             }
 
             .print-info-table td {
-                padding: 4px 6px !important;
+                padding: 3px 5px !important;
                 border: 1px solid #000;
                 text-align: center;
             }
 
             .print-info-table th {
-                padding: 4px 6px !important;
+                padding: 3px 5px !important;
                 border: 1px solid #000;
                 background-color: #f0f0f0;
                 font-weight: bold;
@@ -944,25 +945,21 @@
             .company-logo-container {
                 display: block !important;
                 position: absolute;
-                top: 10px;
-                left: 10px;
+                top: 5px;
+                left: 5px;
             }
 
             .company-logo {
-                width: 60px;
-                height: 60px;
+                width: 50px;
+                height: 50px;
                 border-radius: 50%;
                 background: white !important;
-                border: 2px solid #000 !important;
+                border: 1px solid #000 !important;
                 box-shadow: none !important;
             }
 
             .company-logo img {
-                padding: 5px !important;
-            }
-
-            .logo-upload-btn {
-                display: none !important;
+                padding: 3px !important;
             }
 
             /* ========== COMPACT LAYOUT FOR PRINT ========== */
@@ -972,7 +969,7 @@
             .notes-summary {
                 display: block !important;
                 page-break-inside: avoid !important;
-                margin: 5mm 0 !important;
+                margin: 3mm 0 !important;
                 padding: 0 !important;
                 box-shadow: none !important;
                 border-radius: 0 !important;
@@ -984,7 +981,7 @@
 
             /* ========== COMPACT SECTION CARDS ========== */
             .section-card {
-                margin: 0 0 8px 0 !important;
+                margin: 0 0 5px 0 !important;
                 border: 1px solid #000 !important;
                 border-radius: 0 !important;
                 box-shadow: none !important;
@@ -995,9 +992,9 @@
 
             .section-title {
                 color: #000 !important;
-                font-size: 10pt !important;
+                font-size: 9pt !important;
                 font-weight: bold !important;
-                padding: 5px 6px !important;
+                padding: 3px 4px !important;
                 border-bottom: 1px solid #000 !important;
                 background-color: #f0f0f0 !important;
                 margin: 0 !important;
@@ -1018,7 +1015,7 @@
                 background: #f0f0f0 !important;
                 color: #000 !important;
                 border: 1px solid #000 !important;
-                padding: 3px 4px !important;
+                padding: 2px 3px !important;
                 font-weight: bold !important;
                 text-align: center !important;
                 font-size: 7pt !important;
@@ -1027,7 +1024,7 @@
 
             .criteria-table td {
                 border: 1px solid #666 !important;
-                padding: 3px 4px !important;
+                padding: 2px 3px !important;
                 font-size: 7pt !important;
                 text-align: center !important;
                 vertical-align: middle !important;
@@ -1046,7 +1043,6 @@
                 color: #666 !important;
                 font-size: 6pt !important;
                 text-align: right !important;
-                display: none !important;  /* إخفاء الوصف لتقليل المساحة */
             }
 
             .weight-badge {
@@ -1077,7 +1073,7 @@
             .printed-rating {
                 display: inline !important;
                 font-weight: bold;
-                font-size: 8pt !important;
+                font-size: 7pt !important;
                 padding: 0 2px !important;
                 background-color: #f0f0f0;
                 border-radius: 1px;
@@ -1092,14 +1088,14 @@
                 border: 1px solid #000 !important;
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
-                padding: 8px !important;
-                margin: 8px 0 !important;
+                padding: 5px !important;
+                margin: 5px 0 !important;
             }
 
             .summary-grid {
                 display: grid !important;
                 grid-template-columns: repeat(4, 1fr) !important;
-                gap: 8px !important;
+                gap: 5px !important;
                 text-align: center;
             }
 
@@ -1107,25 +1103,25 @@
                 background: white !important;
                 border: 1px solid #000 !important;
                 color: black !important;
-                padding: 6px !important;
+                padding: 4px !important;
                 margin: 0 !important;
             }
 
             .summary-title {
                 color: #000 !important;
-                font-size: 10pt !important;
-                margin-bottom: 8px !important;
+                font-size: 9pt !important;
+                margin-bottom: 5px !important;
             }
 
             .summary-label {
                 font-size: 7pt !important;
-                margin-bottom: 3px !important;
+                margin-bottom: 2px !important;
             }
 
             .summary-value {
-                font-size: 12pt !important;
+                font-size: 10pt !important;
                 font-weight: 700 !important;
-                margin: 3px 0 !important;
+                margin: 2px 0 !important;
             }
 
             .summary-subtext {
@@ -1139,27 +1135,27 @@
                 border: 1px solid #000 !important;
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
-                padding: 12px !important;
-                margin: 8px 0 !important;
+                padding: 8px !important;
+                margin: 5px 0 !important;
                 text-align: center;
             }
 
             .total-score-label {
-                font-size: 9pt !important;
-                margin-bottom: 3px !important;
+                font-size: 8pt !important;
+                margin-bottom: 2px !important;
             }
 
             .total-score-value {
-                font-size: 20pt !important;
+                font-size: 16pt !important;
                 font-weight: 800 !important;
-                margin: 3px 0 !important;
+                margin: 2px 0 !important;
             }
 
             .total-score-grade {
-                font-size: 10pt !important;
+                font-size: 9pt !important;
                 font-weight: 600 !important;
-                margin-top: 3px !important;
-                padding: 3px 8px !important;
+                margin-top: 2px !important;
+                padding: 2px 6px !important;
                 background: rgba(255, 255, 255, 0.5);
                 border-radius: 15px;
                 display: inline-block;
@@ -1176,25 +1172,25 @@
                 border: 1px solid #000 !important;
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
-                padding: 8px !important;
-                margin: 8px 0 !important;
+                padding: 5px !important;
+                margin: 5px 0 2px 0 !important;
             }
 
             .notes-summary-title {
                 color: #000 !important;
-                font-size: 10pt !important;
-                margin-bottom: 6px !important;
+                font-size: 9pt !important;
+                margin-bottom: 3px !important;
             }
 
             .printed-notes {
                 display: block !important;
                 background: white !important;
                 border: 1px solid #000 !important;
-                padding: 4px !important;
-                margin-top: 3px !important;
-                margin-bottom: 6px !important;
-                min-height: 30px !important;
-                max-height: 60px !important;
+                padding: 3px !important;
+                margin-top: 2px !important;
+                margin-bottom: 2px !important;
+                min-height: 20px !important;
+                max-height: 40px !important;
                 white-space: pre-wrap !important;
                 font-size: 7pt !important;
                 overflow: hidden !important;
@@ -1203,25 +1199,25 @@
             /* ========== COMPACT SIGNATURES ========== */
             .print-signatures {
                 display: block !important;
-                margin-top: 15px !important;
-                border-top: 2px solid #000;
-                padding-top: 8px;
+                margin-top: 5px !important;
+                border-top: 1px solid #000;
+                padding-top: 5px;
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
             }
 
             .print-signatures h3 {
                 text-align: center;
-                margin-bottom: 10px !important;
-                font-size: 10pt !important;
+                margin-bottom: 5px !important;
+                font-size: 9pt !important;
                 font-weight: bold;
             }
 
             .signature-box {
                 border: 1px solid #000;
-                padding: 6px;
-                height: 60px !important;
-                margin-top: 6px !important;
+                padding: 4px;
+                height: 50px !important;
+                margin-top: 3px !important;
                 text-align: center;
                 position: relative;
                 page-break-inside: avoid !important;
@@ -1229,28 +1225,28 @@
 
             .signature-line {
                 border-top: 1px solid #000;
-                margin-top: 25px !important;
+                margin-top: 15px !important;
                 width: 100%;
                 position: absolute;
-                bottom: 20px !important;
+                bottom: 15px !important;
                 left: 0;
             }
 
             .signature-date {
                 position: absolute;
-                bottom: 8px !important;
+                bottom: 5px !important;
                 left: 50%;
                 transform: translateX(-50%);
-                font-size: 7pt !important;
+                font-size: 6pt !important;
             }
 
             .signature-name {
                 position: absolute;
-                bottom: 30px !important;
+                bottom: 20px !important;
                 left: 50%;
                 transform: translateX(-50%);
                 font-weight: bold;
-                font-size: 8pt !important;
+                font-size: 7pt !important;
             }
 
             /* ========== PAGE BREAK CONTROL ========== */
@@ -1275,23 +1271,27 @@
 
             /* تجنب تقسيم الصفوف في الجداول */
             .criteria-table tr {
-                height: 18px !important;
-                max-height: 18px !important;
+                height: 15px !important;
+                max-height: 15px !important;
                 page-break-inside: avoid !important;
             }
 
             /* ========== COMPRESS TABLE LAYOUT ========== */
-            .criteria-table th:nth-child(2),  /* إخفاء عمود الوصف */
+            .criteria-table th:nth-child(2),
             .criteria-table td:nth-child(2) {
-                display: none !important;
+                width: 25% !important;
             }
 
-            .criteria-table th:nth-child(1) { width: 40% !important; }
-            .criteria-table th:nth-child(3) { width: 15% !important; }
-            .criteria-table th:nth-child(4) { width: 20% !important; }
-            .criteria-table th:nth-child(5) { width: 25% !important; }
+            .criteria-table th:nth-child(1) { width: 35% !important; }
+            .criteria-table th:nth-child(3) { width: 10% !important; }
+            .criteria-table th:nth-child(4) { width: 15% !important; }
+            .criteria-table th:nth-child(5) { width: 15% !important; }
 
             /* ========== REMOVE UNNECESSARY SPACING ========== */
+            .sections-container {
+                margin-bottom: 5px !important;
+            }
+
             * {
                 margin-top: 0 !important;
                 margin-bottom: 0 !important;
@@ -1306,8 +1306,8 @@
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%) rotate(-45deg);
-                font-size: 30pt !important;  /* تقليل حجم الـ watermark */
-                color: rgba(0, 0, 0, 0.03) !important;  /* جعله أكثر خفوتًا */
+                font-size: 25pt !important;
+                color: rgba(0, 0, 0, 0.03) !important;
                 z-index: -1;
                 white-space: nowrap;
                 pointer-events: none;
@@ -1322,14 +1322,14 @@
             /* ========== FLEXIBLE ROW HEIGHTS ========== */
             .criteria-table td {
                 height: auto !important;
-                min-height: 18px !important;
+                min-height: 15px !important;
             }
 
             /* ========== COMPACT LAYOUT FOR MULTIPLE SECTIONS ========== */
             .sections-container {
                 display: grid !important;
                 grid-template-columns: 1fr !important;
-                gap: 4px !important;
+                gap: 2px !important;
                 margin: 0 !important;
             }
         }
@@ -2387,7 +2387,7 @@
                 this.logoModal.classList.remove('show');
             }
 
-            handleFileSelect(file) {
+            async handleFileSelect(file) {
                 // التحقق من نوع الملف
                 const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg+xml', 'image/gif'];
                 if (!validTypes.includes(file.type)) {
@@ -2429,15 +2429,55 @@
                 this.showSuccessNotification('تم حفظ الشعار بنجاح');
             }
 
-            loadLogo() {
-                // محاولة تحميل الشعار من localStorage
-                const savedLogo = localStorage.getItem('company_logo');
+            async loadLogo() {
+                try {
+                    // أولاً: محاولة تحميل الشعار من localStorage
+                    const savedLogo = localStorage.getItem('company_logo');
 
-                if (savedLogo) {
-                    this.updateLogo(savedLogo);
-                } else {
-                    // استخدام الشعار الافتراضي
-                    this.updateLogo(this.defaultLogo);
+                    if (savedLogo) {
+                        this.updateLogo(savedLogo);
+                        return;
+                    }
+
+                    // ثانياً: محاولة تحميل الشعار من ملف خارجي
+                    const externalLogo = await this.loadExternalLogo();
+                    if (externalLogo) {
+                        localStorage.setItem('company_logo', externalLogo);
+                        this.updateLogo(externalLogo);
+                        return;
+                    }
+
+                    // ثالثاً: استخدام الشعار الافتراضي
+                    this.useDefaultLogo();
+
+                } catch (error) {
+                    console.error('خطأ في تحميل الشعار:', error);
+                    this.useDefaultLogo();
+                }
+            }
+
+            async loadExternalLogo() {
+                try {
+                    // اسم ملف الشعار الخارجي
+                    const logoFileName = 'logo.png';
+
+                    // محاولة جلب الصورة
+                    const response = await fetch(logoFileName);
+                    if (!response.ok) {
+                        throw new Error('لم يتم العثور على ملف الشعار');
+                    }
+
+                    // تحويل الصورة إلى blob ثم إلى base64
+                    const blob = await response.blob();
+                    return new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = () => reject(new Error('خطأ في قراءة ملف الشعار'));
+                        reader.readAsDataURL(blob);
+                    });
+                } catch (error) {
+                    console.warn('لم يتم العثور على الشعار الخارجي:', error.message);
+                    return null;
                 }
             }
 
@@ -2470,7 +2510,6 @@
                         <span>V</span>
                     </div>
                 `;
-                localStorage.removeItem('company_logo');
             }
 
             updatePrintLogo(logoData) {
@@ -2608,7 +2647,7 @@
                               description: { ar: 'المرونة في التفاوض', en: 'Flexibility in negotiation' }, weight: 7 },
                             { id: 'quotation_pricing', name: { ar: 'تسعير عروض الأسعار', en: 'Quotation Pricing' },
                               description: { ar: 'الدقة، التنافسية', en: 'Accuracy, competitiveness' }, weight: 7 },
-                            { id: 'sales_network', name: { ar: 'قبول شب المبيسات للعميل', en: 'Accepting Customer Network Preferences' },
+                            { id: 'sales_network', name: { ar: 'قبول شاب المبيعات للعميل', en: 'Accepting Customer Network Preferences' },
                               description: { ar: 'تقديم البدائل المناسبة', en: 'Providing suitable alternatives' }, weight: 6 },
                             { id: 'product_knowledge', name: { ar: 'حفظ المواد بالمواصفات', en: 'Product Knowledge' },
                               description: { ar: 'المعرفة بالمنتجات', en: 'Knowledge of products' }, weight: 7 },
@@ -3830,7 +3869,7 @@
                 const today = new Date();
                 const formattedDate = today.toLocaleDateString(lang === 'ar' ? 'ar-SA' : 'en-US', {
                     year: 'numeric',
-                    month: 'short',  // استخدام الشهر المختصر
+                    month: 'short',
                     day: 'numeric'
                 });
                 this.elements.printDateInfo.textContent = formattedDate;
@@ -3878,18 +3917,12 @@
                 // تقليل المسافات في الجداول
                 const tables = document.querySelectorAll('.criteria-table');
                 tables.forEach(table => {
-                    // إخفاء الوصف في الطباعة
-                    const descriptionCells = table.querySelectorAll('td:nth-child(2), th:nth-child(2)');
-                    descriptionCells.forEach(cell => {
-                        cell.style.display = 'none';
-                    });
-
                     // تقليل ارتفاع الصفوف
                     const rows = table.querySelectorAll('tr');
                     rows.forEach(row => {
-                        row.style.height = '20px';
-                        row.style.minHeight = '20px';
-                        row.style.maxHeight = '20px';
+                        row.style.height = '15px';
+                        row.style.minHeight = '15px';
+                        row.style.maxHeight = '15px';
                     });
                 });
             }
@@ -4049,26 +4082,24 @@ ${lang === 'ar' ? 'تم إرسال هذا التقرير تلقائياً من �
             }
 
             // ========== دالة لتحميل الشعار من ملف محلي ==========
-            loadLogoFromFile(filePath) {
-                // هذه دالة مساعدة لتحميل الشعار من ملف في نفس المجلد
-                fetch(filePath)
-                    .then(response => response.blob())
-                    .then(blob => {
-                        const reader = new FileReader();
-                        reader.onload = (e) => {
-                            this.logoManager.setLogoFromBase64(e.target.result);
-                        };
-                        reader.readAsDataURL(blob);
-                    })
-                    .catch(error => {
-                        console.error('فشل تحميل الشعار:', error);
-                        this.logoManager.useDefaultLogo();
-                    });
-            }
+            async loadLogoFromFile(filePath) {
+                try {
+                    const response = await fetch(filePath);
+                    if (!response.ok) {
+                        throw new Error('لم يتم العثور على ملف الشعار');
+                    }
 
-            // ========== دالة لاستخدام شعار افتراضي ==========
-            useDefaultLogo() {
-                this.logoManager.useDefaultLogo();
+                    const blob = await response.blob();
+                    return new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = () => reject(new Error('خطأ في قراءة ملف الشعار'));
+                        reader.readAsDataURL(blob);
+                    });
+                } catch (error) {
+                    console.error('فشل تحميل الشعار:', error);
+                    this.logoManager.useDefaultLogo();
+                }
             }
 
             // ========== دالة للحصول على الشعار الحالي ==========
@@ -4080,13 +4111,6 @@ ${lang === 'ar' ? 'تم إرسال هذا التقرير تلقائياً من �
         // ========== تهيئة التطبيق عند تحميل الصفحة ==========
         document.addEventListener('DOMContentLoaded', () => {
             window.app = new EvaluationApp();
-
-            // دالة لتحميل الشعار من ملف في نفس المجلد (اختياري)
-            // window.app.loadLogoFromFile('logo.png');
-
-            // أو استخدام شعار افتراضي من Base64
-            // const customLogo = 'data:image/png;base64,....';
-            // window.app.logoManager.setLogoFromBase64(customLogo);
         });
 
         // ========== دوال مساعدة للشعار ==========
