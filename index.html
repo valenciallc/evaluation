@@ -11,6 +11,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <!-- html2canvas: يسمح بتوليد PDF عربي سليم عبر تحويل HTML إلى صورة -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Chart.js: الرسوم البيانية لملخص النتائج -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
         /* ========== RESET & BASE ========== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -636,6 +638,8 @@
             background: rgba(255,255,255,0.1); padding:20px; border-radius:var(--radius);
             backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.2);
         }
+        .summary-chart { margin-top: 20px; background: rgba(255,255,255,0.12); border-radius: var(--radius); padding: 15px; border:1px solid rgba(255,255,255,0.15); }
+        @media print { .summary-chart { display: none !important; } }
         .summary-label { font-size:0.95rem; opacity:0.9; margin-bottom:10px; }
         .summary-value { font-size:2rem; font-weight:700; margin:10px 0; }
         .summary-subtext { font-size:0.85rem; opacity:0.8; }
@@ -766,6 +770,9 @@
            ARCHIVE (سجل التقييمات)
         ======================================================== */
         .archive-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px; }
+        .archive-toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+        .archive-search { flex: 1; min-width: 180px; padding: 9px 12px; border: 2px solid var(--gray-light); border-radius: 6px; font-family:'Cairo',sans-serif; font-size:0.9rem; }
+        .archive-search:focus { outline:none; border-color: var(--primary); }
         .btn-archive {
             background: linear-gradient(to right, var(--primary), var(--gold));
             color: white; border: none; padding: 13px 26px;
@@ -1177,6 +1184,9 @@
                 <div class="summary-subtext" id="summaryMessage">-</div>
             </div>
         </div>
+        <div class="summary-chart">
+            <canvas id="radarChart" height="260"></canvas>
+        </div>
     </div>
 
     <!-- Total Score -->
@@ -1235,8 +1245,13 @@
     <div class="modal-overlay" id="archiveModal">
         <div class="modal-box wide">
             <div class="modal-title"><i class="fas fa-archive"></i><span id="archiveModalTitle">سجل التقييمات</span></div>
-            <div style="text-align:left; margin-bottom:12px;">
-                <button class="btn-sm delete" id="clearArchiveBtn"><i class="fas fa-trash"></i> <span id="clearArchiveText">حذف الكل</span></button>
+            <div class="archive-toolbar">
+                <input type="text" id="archiveSearch" class="archive-search" placeholder="🔍 بحث بالاسم أو القسم...">
+                <select id="archiveDeptFilter" class="archive-search"><option value="">كل الأقسام</option></select>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                    <button class="btn-sm pdf" id="exportCsvBtn"><i class="fas fa-file-csv"></i> <span id="exportCsvText">تصدير CSV</span></button>
+                    <button class="btn-sm delete" id="clearArchiveBtn"><i class="fas fa-trash"></i> <span id="clearArchiveText">حذف الكل</span></button>
+                </div>
             </div>
             <div id="archiveList"><div class="archive-empty"><i class="fas fa-database"></i><h3 id="archiveEmptyTitle">لا توجد تقييمات محفوظة بعد</h3><p id="archiveEmptyText">عند إرسال أي تقييم سيتم حفظه هنا تلقائياً</p></div></div>
             <div style="display:flex; justify-content:center; margin-top:18px;">
@@ -1306,41 +1321,45 @@
 // ============================================================
 const USERS = [
     // HR / General Manager — can access ALL departments
-    { username: 'hr',       password: 'Valencia@HR2026',   dept: 'hr',        name: 'إدارة الموارد البشرية', role: 'مدير الموارد البشرية',   deptLabel: 'الموارد البشرية' },
-    { username: 'samer',    password: 'Valencia@GM2026',   dept: 'hr',        name: 'سامر عبد الواحد',       role: 'المدير العام للشركة',     deptLabel: 'الإدارة العليا' },
+    { username: 'hr',       passwordHash: 'sha256:7fdf373e0e007c144776873fdd527737a1885a878a303a6c3af093e29a7435f9', dept: 'hr',        name: 'إدارة الموارد البشرية', role: 'مدير الموارد البشرية',   deptLabel: 'الموارد البشرية' },
+    { username: 'samer',    passwordHash: 'sha256:027fec7a0b300ed0143d71128a521f07411f7cd441a2f799e1029213b426f586', dept: 'hr',        name: 'سامر عبد الواحد',       role: 'المدير العام للشركة',     deptLabel: 'الإدارة العليا' },
 
     // Sales
-    { username: 'sales',    password: 'Sales@2026',        dept: 'sales',     name: 'ركان إياد زياز',        role: 'مسؤول قسم المبيعات',     deptLabel: 'قسم المبيعات' },
-    { username: 'mohamadali', password: 'AbuDhabi@2026',   dept: 'sales',     name: 'محمد علي',              role: 'مدير فرع أبوظبي',         deptLabel: 'قسم المبيعات' },
+    { username: 'sales',    passwordHash: 'sha256:65f478a5738e3437839f9767c0600050ffd4429f1cb521d76f22351124813020', dept: 'sales',     name: 'ركان إياد زياز',        role: 'مسؤول قسم المبيعات',     deptLabel: 'قسم المبيعات' },
+    { username: 'mohamadali', passwordHash: 'sha256:69af3eda2f1cd93b59efe24c702bc943dff211755900495f8b9eb3532df2796a', dept: 'sales',     name: 'محمد علي',              role: 'مدير فرع أبوظبي',         deptLabel: 'قسم المبيعات' },
 
     // Finance
-    { username: 'mohannad', password: 'Finance@2026',      dept: 'finance',   name: 'مهند نيازي السلق',      role: 'مسؤول قسم المحاسبة',     deptLabel: 'قسم المحاسبة/المالية' },
+    { username: 'mohannad', passwordHash: 'sha256:2ccb642daba2e0364c839d5667a1ae4d2d61e5b66e697ea53c99127aa3129485', dept: 'finance',   name: 'مهند نيازي السلق',      role: 'مسؤول قسم المحاسبة',     deptLabel: 'قسم المحاسبة/المالية' },
 
     // Vehicles
-    { username: 'ahmedmaher', password: 'Vehicles@2026',   dept: 'vehicles',  name: 'احمد ماهر الغندور',     role: 'مسؤول قسم الآليات',      deptLabel: 'قسم الآليات' },
+    { username: 'ahmedmaher', passwordHash: 'sha256:e949e84d876bbb7af72873c899097989be8937d3546dc866d195f7796afa8c94', dept: 'vehicles',  name: 'احمد ماهر الغندور',     role: 'مسؤول قسم الآليات',      deptLabel: 'قسم الآليات' },
 
     // Warehouse
-    { username: 'maged',    password: 'Warehouse@2026',    dept: 'warehouse', name: 'ماجد يوسف',             role: 'مسؤول قسم المستودعات',   deptLabel: 'قسم المستودعات' },
+    { username: 'maged',    passwordHash: 'sha256:66833d1c3598109b0cc091bd6bfcef7026b19e784da82c516bb98219565efd85', dept: 'warehouse', name: 'ماجد يوسف',             role: 'مسؤول قسم المستودعات',   deptLabel: 'قسم المستودعات' },
 
     // Design
-    { username: 'ramadan',  password: 'Design@2026',       dept: 'design',    name: 'رمضان',                 role: 'مسؤول قسم التصميم',      deptLabel: 'قسم التصميم' },
+    { username: 'ramadan',  passwordHash: 'sha256:ec527898a8895cce3c43bb258dcbc1034fdab1195487322f4052064532252e35', dept: 'design',    name: 'رمضان',                 role: 'مسؤول قسم التصميم',      deptLabel: 'قسم التصميم' },
 
     // Marketing
-    { username: 'amin',     password: 'Marketing@2026',    dept: 'marketing', name: 'أمين أحمد حجازي',       role: 'مسؤول قسم التسويق',      deptLabel: 'قسم التسويق الإلكتروني' },
+    { username: 'amin',     passwordHash: 'sha256:dc2f51759dfe6098d8ee2fed247bf789319bfc76c86ddc3a680a99e59da1ff26', dept: 'marketing', name: 'أمين أحمد حجازي',       role: 'مسؤول قسم التسويق',      deptLabel: 'قسم التسويق الإلكتروني' },
 
     // Projects
-    { username: 'mamoun',   password: 'Projects@2026',     dept: 'projects',  name: 'مامون أحمد حجازي',      role: 'مسؤول قسم المشاريع',     deptLabel: 'قسم المشاريع' },
-
-    // Marble
-    { username: 'anas',     password: 'Marble@2026',       dept: 'marble',    name: 'أنس محمد السرداني',     role: 'مسؤول قسم الرخام',       deptLabel: 'قسم الرخام' },
+    { username: 'mamoun',   passwordHash: 'sha256:4f1082f4e20d4624a7502e783ca77ad793bb924653f00e59930c844296d431f9', dept: 'projects',  name: 'مامون أحمد حجازي',      role: 'مسؤول قسم المشاريع',     deptLabel: 'قسم المشاريع' },
 ];
 
 // ============================================================
 // SESSION MANAGEMENT
 // ============================================================
+// حساب هاش SHA-256 لكلمة المرور (Web Crypto — يعمل في المتصفح مباشرة)
+async function sha256Hex(str) {
+    const data = new TextEncoder().encode(str);
+    const buf  = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 let currentUser = null;
 
-function login() {
+async function login() {
     const dept     = document.getElementById('loginDept').value;
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value;
@@ -1364,9 +1383,7 @@ function login() {
 
     // البحث عن المستخدم
     const user = USERS.find(u =>
-        u.username.toLowerCase() === username.toLowerCase() && // تجاهل حالة الأحرف
-        u.password === password &&
-        (u.dept === dept || u.dept === 'hr')
+        u.username.toLowerCase() === username.toLowerCase() // تجاهل حالة الأحرف
     );
 
     if (!user) {
@@ -1374,6 +1391,16 @@ function login() {
         errEl.classList.add('show');
         document.getElementById('loginPassword').value = ''; // مسح كلمة المرور
         console.warn('محاولة دخول فاشلة:', { username, dept });
+        return;
+    }
+
+    // التحقق من كلمة المرور عبر مقارنة الهاش (مؤمَّن)
+    const enteredHash = await sha256Hex(password);
+    if (user.passwordHash !== `sha256:${enteredHash}`) {
+        errTxt.textContent = '❌ اسم المستخدم أو كلمة المرور غير صحيحة، أو القسم غير متطابق';
+        errEl.classList.add('show');
+        document.getElementById('loginPassword').value = '';
+        console.warn('محاولة دخول فاشلة (كلمة مرور خاطئة):', { username, dept });
         return;
     }
 
@@ -1559,7 +1586,8 @@ const TRANSLATIONS = {
 const CONFIG = {
     STORAGE_KEY: 'valencia_evaluations',
     TELEGRAM_BOT_TOKEN: '8211546767:AAHDBtxYSpF3WX2uq8l9d6D8oeCaiA2egjs',
-    TELEGRAM_CHAT_ID: '-1003528917325'
+    TELEGRAM_CHAT_ID: '-1003528917325',
+    DRAFT_KEY: 'valencia_evaluation_draft'
 };
 
 // ============================================================
@@ -1684,10 +1712,10 @@ class LogoManager {
 // ============================================================
 const ORGANIZATION_DATA = {
     general: [
-        { id:'discipline',  name:{ar:'الانضباط والالتزام',       en:'Discipline and Commitment'},  description:{ar:'الحضور، الالتزام باللوائح',  en:'Attendance, compliance with regulations'}, weight:10 },
-        { id:'teamwork',    name:{ar:'العمل الجماعي والتعاون',   en:'Teamwork and Cooperation'},    description:{ar:'التعاون مع الفريق',           en:'Team collaboration'}, weight:10 },
-        { id:'productivity',name:{ar:'الإنتاجية والإنجاز',       en:'Productivity and Achievement'},description:{ar:'إنجاز المهام في الوقت',       en:'Task completion on time'}, weight:10 },
-        { id:'initiative',  name:{ar:'المبادرة والتحسين',        en:'Initiative and Improvement'},  description:{ar:'اقتراح تحسينات، حل المشكلات', en:'Suggesting improvements, problem solving'}, weight:10 }
+        { id:'discipline',  name:{ar:'الانضباط والالتزام',       en:'Discipline and Commitment'},  description:{ar:'الحضور، الالتزام باللوائح',  en:'Attendance, compliance with regulations'}, weight:20 },
+        { id:'teamwork',    name:{ar:'العمل الجماعي والتعاون',   en:'Teamwork and Cooperation'},    description:{ar:'التعاون مع الفريق',           en:'Team collaboration'}, weight:15 },
+        { id:'productivity',name:{ar:'الإنتاجية والإنجاز',       en:'Productivity and Achievement'},description:{ar:'إنجاز المهام في الوقت',       en:'Task completion on time'}, weight:20 },
+        { id:'initiative',  name:{ar:'المبادرة والتحسين',        en:'Initiative and Improvement'},  description:{ar:'اقتراح تحسينات، حل المشكلات', en:'Suggesting improvements, problem solving'}, weight:15 }
     ],
     departments: {
         sales: {
@@ -1708,15 +1736,15 @@ const ORGANIZATION_DATA = {
             },
             criteria: {
                 sales_rep: [
-                    {id:'appearance',      name:{ar:'المظهر الخارجي',en:'External Appearance'},              description:{ar:'اللباس، النظافة',en:'Clothing, cleanliness'}, weight:10},
-                    {id:'customer_interaction', name:{ar:'التعامل مع العميل',en:'Customer Interaction'},    description:{ar:'اللباقة، الاحترافية',en:'Politeness, professionalism'}, weight:10},
+                    {id:'appearance',      name:{ar:'المظهر الخارجي',en:'External Appearance'},              description:{ar:'اللباس، النظافة',en:'Clothing, cleanliness'}, weight:8},
+                    {id:'customer_interaction', name:{ar:'التعامل مع العميل',en:'Customer Interaction'},    description:{ar:'اللباقة، الاحترافية',en:'Politeness, professionalism'}, weight:12},
                     {id:'response_speed',  name:{ar:'الاستجابة السريعة',en:'Quick Response'},                description:{ar:'سرعة الرد',en:'Quick response to inquiries'}, weight:10},
-                    {id:'after_sales',     name:{ar:'حل المشاكل ما بعد البيع',en:'After-Sales Problem Solving'},description:{ar:'متابعة الشكاوى',en:'Follow-up on complaints'}, weight:10},
+                    {id:'after_sales',     name:{ar:'حل المشاكل ما بعد البيع',en:'After-Sales Problem Solving'},description:{ar:'متابعة الشكاوى',en:'Follow-up on complaints'}, weight:12},
                     {id:'old_customers',   name:{ar:'متابعة العملاء القدامى',en:'Follow-up with Old Customers'},description:{ar:'الاتصال الدوري',en:'Periodic contact'}, weight:10},
-                    {id:'pricing_negotiation', name:{ar:'قدرات البيع ضمن حدود السعر',en:'Pricing Negotiation Skills'},description:{ar:'المرونة في التفاوض',en:'Flexibility in negotiation'}, weight:10},
-                    {id:'quotation_pricing',name:{ar:'تسعير عروض الأسعار',en:'Quotation Pricing'},           description:{ar:'الدقة، التنافسية',en:'Accuracy, competitiveness'}, weight:10},
-                    {id:'product_knowledge',name:{ar:'حفظ المواد بالمواصفات',en:'Product Knowledge'},        description:{ar:'المعرفة بالمنتجات',en:'Knowledge of products'}, weight:10},
-                    {id:'stone_info',      name:{ar:'حفظ معلومات الحجر',en:'Stone Information Knowledge'},  description:{ar:'المعرفة بالأنواع والجودة',en:'Knowledge of types and quality'}, weight:10},
+                    {id:'pricing_negotiation', name:{ar:'قدرات البيع ضمن حدود السعر',en:'Pricing Negotiation Skills'},description:{ar:'المرونة في التفاوض',en:'Flexibility in negotiation'}, weight:12},
+                    {id:'quotation_pricing',name:{ar:'تسعير عروض الأسعار',en:'Quotation Pricing'},           description:{ar:'الدقة، التنافسية',en:'Accuracy, competitiveness'}, weight:12},
+                    {id:'product_knowledge',name:{ar:'حفظ المواد بالمواصفات',en:'Product Knowledge'},        description:{ar:'المعرفة بالمنتجات',en:'Knowledge of products'}, weight:12},
+                    {id:'stone_info',      name:{ar:'حفظ معلومات الحجر',en:'Stone Information Knowledge'},  description:{ar:'المعرفة بالأنواع والجودة',en:'Knowledge of types and quality'}, weight:12},
                     {id:'selling_slow',    name:{ar:'القدرة على بيع الأصناف الراكدة',en:'Selling Slow-Moving Items'},description:{ar:'الإقناع',en:'Persuasion'}, weight:10},
                     {id:'sales_network',   name:{ar:'قبول شاب المبيعات للعميل',en:'Customer Network Preferences'},description:{ar:'تقديم البدائل المناسبة',en:'Providing alternatives'}, weight:10}
                 ]
@@ -1743,16 +1771,35 @@ const ORGANIZATION_DATA = {
                         {id:'francies',     name:'فرانسيس نانا',            position:{ar:'عامل مستودع',en:'Warehouse Worker'}}
                     ]}
             },
-            criteria:[
-                {id:'order_distribution', name:{ar:'توزيع الأوامر',en:'Order Distribution'},description:{ar:'الدقة، التنظيم',en:'Accuracy, organization'}, weight:10},
-                {id:'personal_cleanliness',name:{ar:'النظافة الشخصية',en:'Personal Cleanliness'},description:{ar:'نظافة الزي',en:'Uniform cleanliness'}, weight:10},
-                {id:'new_tasks',          name:{ar:'قبول مهام جديدة والتكيف معها',en:'Adapting to New Tasks'},description:{ar:'المرونة',en:'Flexibility'}, weight:10},
-                {id:'physical_strength',  name:{ar:'القوة البدنية',en:'Physical Strength'},description:{ar:'القدرة على حمل الأوزان',en:'Ability to carry weights'}, weight:10},
-                {id:'stone_repair',       name:{ar:'إصلاح الحجر المكسور',en:'Repair of Broken Stone'},description:{ar:'المهارة',en:'Skill'}, weight:10},
-                {id:'storage_accuracy',   name:{ar:'دقة التخزين والجرد',en:'Storage and Inventory Accuracy'},description:{ar:'التنظيم والدقة',en:'Organization and accuracy'}, weight:10},
-                {id:'task_speed',         name:{ar:'سرعة تنفيذ المهام',en:'Task Execution Speed'},description:{ar:'الكفاءة',en:'Efficiency'}, weight:10},
-                {id:'safety_procedures',  name:{ar:'الالتزام بإجراءات السلامة',en:'Adherence to Safety Procedures'},description:{ar:'الوعي بالسلامة',en:'Safety awareness'}, weight:10}
-            ]
+            criteria: {
+                warehouse_worker: [
+                    {id:'order_distribution', name:{ar:'توزيع الأوامر',en:'Order Distribution'},description:{ar:'الدقة، التنظيم',en:'Accuracy, organization'}, weight:10},
+                    {id:'personal_cleanliness',name:{ar:'النظافة الشخصية',en:'Personal Cleanliness'},description:{ar:'نظافة الزي',en:'Uniform cleanliness'}, weight:8},
+                    {id:'new_tasks',          name:{ar:'قبول مهام جديدة والتكيف معها',en:'Adapting to New Tasks'},description:{ar:'المرونة',en:'Flexibility'}, weight:10},
+                    {id:'physical_strength',  name:{ar:'القوة البدنية',en:'Physical Strength'},description:{ar:'القدرة على حمل الأوزان',en:'Ability to carry weights'}, weight:12},
+                    {id:'stone_repair',       name:{ar:'إصلاح الحجر المكسور',en:'Repair of Broken Stone'},description:{ar:'المهارة',en:'Skill'}, weight:12},
+                    {id:'storage_accuracy',   name:{ar:'دقة التخزين والجرد',en:'Storage and Inventory Accuracy'},description:{ar:'التنظيم والدقة',en:'Organization and accuracy'}, weight:12},
+                    {id:'task_speed',         name:{ar:'سرعة تنفيذ المهام',en:'Task Execution Speed'},description:{ar:'الكفاءة',en:'Efficiency'}, weight:12},
+                    {id:'safety_procedures',  name:{ar:'الالتزام بإجراءات السلامة',en:'Adherence to Safety Procedures'},description:{ar:'الوعي بالسلامة',en:'Safety awareness'}, weight:14}
+                ],
+                delivery_worker: [
+                    {id:'delivery_punctuality',name:{ar:'الالتزام بمواعيد التسليم',en:'Delivery Punctuality'},description:{ar:'الانضباط الزمني',en:'Time discipline'}, weight:14},
+                    {id:'vehicle_care',        name:{ar:'المحافظة على مركبة التسليم',en:'Delivery Vehicle Care'},description:{ar:'العناية',en:'Care'}, weight:10},
+                    {id:'route_knowledge',     name:{ar:'معرفة الطرق والمناطق',en:'Route Knowledge'},description:{ar:'الكفاءة',en:'Efficiency'}, weight:10},
+                    {id:'order_handling',      name:{ar:'التعامل الآمن مع الطلبات',en:'Safe Order Handling'},description:{ar:'الدقة',en:'Accuracy'}, weight:12},
+                    {id:'customer_service',    name:{ar:'حسن التعامل مع العميل عند التسليم',en:'Customer Service'},description:{ar:'اللباقة',en:'Professionalism'}, weight:12},
+                    {id:'task_speed',          name:{ar:'سرعة تنفيذ المهام',en:'Task Execution Speed'},description:{ar:'الكفاءة',en:'Efficiency'}, weight:12},
+                    {id:'safety_procedures',   name:{ar:'الالتزام بإجراءات السلامة والمرور',en:'Safety and Traffic Rules'},description:{ar:'الوعي بالسلامة',en:'Safety awareness'}, weight:14}
+                ],
+                entry_worker: [
+                    {id:'data_accuracy',       name:{ar:'دقة إدخال البيانات',en:'Data Entry Accuracy'},description:{ar:'الدقة',en:'Accuracy'}, weight:14},
+                    {id:'inventory_system',    name:{ar:'إتقان نظام الجرد',en:'Inventory System Skills'},description:{ar:'المعرفة التقنية',en:'Technical knowledge'}, weight:12},
+                    {id:'order_distribution',  name:{ar:'توزيع الأوامر',en:'Order Distribution'},description:{ar:'الدقة، التنظيم',en:'Accuracy, organization'}, weight:10},
+                    {id:'storage_accuracy',    name:{ar:'دقة التخزين والجرد',en:'Storage and Inventory Accuracy'},description:{ar:'التنظيم والدقة',en:'Organization and accuracy'}, weight:12},
+                    {id:'task_speed',          name:{ar:'سرعة تنفيذ المهام',en:'Task Execution Speed'},description:{ar:'الكفاءة',en:'Efficiency'}, weight:12},
+                    {id:'safety_procedures',   name:{ar:'الالتزام بإجراءات السلامة',en:'Adherence to Safety Procedures'},description:{ar:'الوعي بالسلامة',en:'Safety awareness'}, weight:12}
+                ]
+            }
         },
         design: {
             name:{ar:'🎨 قسم التصميم (مكتب مصر)', en:'🎨 Design Department (Egypt Office)'},
@@ -1762,14 +1809,14 @@ const ORGANIZATION_DATA = {
                 {id:'bushra',   name:'بشرى',   position:{ar:'مصممة',en:'Designer'}}
             ],
             criteria:[
-                {id:'3d_accuracy',       name:{ar:'معدل دقة الـ3D',en:'3D Accuracy Rate'},description:{ar:'التفاصيل، الواقعية',en:'Details, realism'}, weight:10},
-                {id:'quotation_speed',   name:{ar:'سرعة تنفيذ عرض السعر',en:'Quotation Speed'},description:{ar:'الكفاءة',en:'Efficiency'}, weight:10},
+                {id:'3d_accuracy',       name:{ar:'معدل دقة الـ3D',en:'3D Accuracy Rate'},description:{ar:'التفاصيل، الواقعية',en:'Details, realism'}, weight:14},
+                {id:'quotation_speed',   name:{ar:'سرعة تنفيذ عرض السعر',en:'Quotation Speed'},description:{ar:'الكفاءة',en:'Efficiency'}, weight:12},
                 {id:'quick_wit',         name:{ar:'سرعة البديهة',en:'Quick Wit'},description:{ar:'الحلول السريعة',en:'Quick solutions'}, weight:10},
-                {id:'design_problems',   name:{ar:'حل المشاكل التصميمية',en:'Solving Design Problems'},description:{ar:'الإبداع',en:'Creativity'}, weight:10},
-                {id:'quantity_accuracy', name:{ar:'دقة الكميات والحسابات',en:'Quantity Accuracy'},description:{ar:'الدقة الرقمية',en:'Numerical accuracy'}, weight:10},
-                {id:'material_knowledge',name:{ar:'حفظ المواد والديكورات بالمواصفات',en:'Material Knowledge'},description:{ar:'المعرفة الفنية',en:'Technical knowledge'}, weight:10},
-                {id:'quotation_pricing', name:{ar:'تسعير عروض الأسعار',en:'Quotation Pricing'},description:{ar:'الدقة، التنافسية',en:'Accuracy, competitiveness'}, weight:10},
-                {id:'delivery_deadlines',name:{ar:'الالتزام بمواعيد التسليم',en:'Delivery Deadlines'},description:{ar:'الانضباط الزمني',en:'Time discipline'}, weight:10}
+                {id:'design_problems',   name:{ar:'حل المشاكل التصميمية',en:'Solving Design Problems'},description:{ar:'الإبداع',en:'Creativity'}, weight:12},
+                {id:'quantity_accuracy', name:{ar:'دقة الكميات والحسابات',en:'Quantity Accuracy'},description:{ar:'الدقة الرقمية',en:'Numerical accuracy'}, weight:12},
+                {id:'material_knowledge',name:{ar:'حفظ المواد والديكورات بالمواصفات',en:'Material Knowledge'},description:{ar:'المعرفة الفنية',en:'Technical knowledge'}, weight:12},
+                {id:'quotation_pricing', name:{ar:'تسعير عروض الأسعار',en:'Quotation Pricing'},description:{ar:'الدقة، التنافسية',en:'Accuracy, competitiveness'}, weight:14},
+                {id:'delivery_deadlines',name:{ar:'الالتزام بمواعيد التسليم',en:'Delivery Deadlines'},description:{ar:'الانضباط الزمني',en:'Time discipline'}, weight:14}
             ]
         },
         vehicles: {
@@ -1794,22 +1841,22 @@ const ORGANIZATION_DATA = {
             },
             criteria: {
                 forklift_drivers:[
-                    {id:'driver_experience',  name:{ar:'خبرة السائق',en:'Driver Experience'},description:{ar:'المهارة، الأمان',en:'Skill, safety'}, weight:10},
-                    {id:'periodic_maintenance',name:{ar:'الصيانة الدورية',en:'Periodic Maintenance'},description:{ar:'الاهتمام بالمركبة',en:'Vehicle care'}, weight:10},
-                    {id:'forklift_cleanliness',name:{ar:'نظافة الفوركليفت',en:'Forklift Cleanliness'},description:{ar:'النظافة العامة',en:'General cleanliness'}, weight:10},
-                    {id:'driving_experience',  name:{ar:'الخبرة في القيادة',en:'Driving Experience'},description:{ar:'الكفاءة الفنية',en:'Technical competence'}, weight:10},
-                    {id:'loading_experience',  name:{ar:'خبرة التحميل والتنزيل',en:'Loading Experience'},description:{ar:'الدقة والسرعة',en:'Accuracy and speed'}, weight:10},
-                    {id:'safety_forklift',     name:{ar:'الالتزام بإجراءات السلامة',en:'Safety Procedures'},description:{ar:'الوعي بالسلامة',en:'Safety awareness'}, weight:10}
+                    {id:'driver_experience',  name:{ar:'خبرة السائق',en:'Driver Experience'},description:{ar:'المهارة، الأمان',en:'Skill, safety'}, weight:12},
+                    {id:'periodic_maintenance',name:{ar:'الصيانة الدورية',en:'Periodic Maintenance'},description:{ar:'الاهتمام بالمركبة',en:'Vehicle care'}, weight:12},
+                    {id:'forklift_cleanliness',name:{ar:'نظافة الفوركليفت',en:'Forklift Cleanliness'},description:{ar:'النظافة العامة',en:'General cleanliness'}, weight:8},
+                    {id:'driving_experience',  name:{ar:'الخبرة في القيادة',en:'Driving Experience'},description:{ar:'الكفاءة الفنية',en:'Technical competence'}, weight:12},
+                    {id:'loading_experience',  name:{ar:'خبرة التحميل والتنزيل',en:'Loading Experience'},description:{ar:'الدقة والسرعة',en:'Accuracy and speed'}, weight:12},
+                    {id:'safety_forklift',     name:{ar:'الالتزام بإجراءات السلامة',en:'Safety Procedures'},description:{ar:'الوعي بالسلامة',en:'Safety awareness'}, weight:14}
                 ],
                 shipping_drivers:[
-                    {id:'vehicle_maintenance', name:{ar:'المحافظة على السيارة',en:'Vehicle Maintenance'},description:{ar:'العناية الدورية',en:'Periodic care'}, weight:10},
-                    {id:'cleanliness_v',       name:{ar:'النظافة الداخلية والخارجية',en:'Internal/External Cleanliness'},description:{ar:'المظهر العام',en:'Overall appearance'}, weight:10},
-                    {id:'work_speed_v',        name:{ar:'سرعة إتمام العمل',en:'Work Speed'},description:{ar:'الكفاءة',en:'Efficiency'}, weight:10},
-                    {id:'crane_experience',    name:{ar:'خبرة استخدام الكرين',en:'Crane Experience'},description:{ar:'المهارة الفنية',en:'Technical skill'}, weight:10},
+                    {id:'vehicle_maintenance', name:{ar:'المحافظة على السيارة',en:'Vehicle Maintenance'},description:{ar:'العناية الدورية',en:'Periodic care'}, weight:12},
+                    {id:'cleanliness_v',       name:{ar:'النظافة الداخلية والخارجية',en:'Internal/External Cleanliness'},description:{ar:'المظهر العام',en:'Overall appearance'}, weight:8},
+                    {id:'work_speed_v',        name:{ar:'سرعة إتمام العمل',en:'Work Speed'},description:{ar:'الكفاءة',en:'Efficiency'}, weight:12},
+                    {id:'crane_experience',    name:{ar:'خبرة استخدام الكرين',en:'Crane Experience'},description:{ar:'المهارة الفنية',en:'Technical skill'}, weight:12},
                     {id:'maintenance_schedule',name:{ar:'الالتزام بمواعيد الصيانة',en:'Maintenance Schedule'},description:{ar:'الانضباط',en:'Discipline'}, weight:10},
                     {id:'fault_reporting',     name:{ar:'الإبلاغ عن الأعطال فوراً',en:'Fault Reporting'},description:{ar:'سرعة الإبلاغ',en:'Prompt reporting'}, weight:10},
                     {id:'daily_check',         name:{ar:'الفحص اليومي',en:'Daily Check'},description:{ar:'الالتزام اليومي',en:'Daily discipline'}, weight:10},
-                    {id:'traffic_rules',       name:{ar:'الالتزام بقواعد المرور',en:'Traffic Rules'},description:{ar:'السلامة المرورية',en:'Road safety'}, weight:10}
+                    {id:'traffic_rules',       name:{ar:'الالتزام بقواعد المرور',en:'Traffic Rules'},description:{ar:'السلامة المرورية',en:'Road safety'}, weight:14}
                 ]
             }
         },
@@ -1822,13 +1869,13 @@ const ORGANIZATION_DATA = {
                 {id:'hossam',         name:'حسام الدين طارق حسن مصيلحي',     position:{ar:'محاسب',en:'Accountant'}}
             ],
             criteria:[
-                {id:'accounting_accuracy',name:{ar:'الدقة المحاسبية',en:'Accounting Accuracy'},description:{ar:'إدخال البيانات',en:'Data entry'}, weight:10},
-                {id:'timeliness',          name:{ar:'الالتزام بالمواعيد',en:'Timeliness'},description:{ar:'الانضباط الزمني',en:'Time discipline'}, weight:10},
-                {id:'confidentiality',     name:{ar:'السرية والأمانة',en:'Confidentiality and Integrity'},description:{ar:'حفظ الأسرار',en:'Keeping secrets'}, weight:10},
+                {id:'accounting_accuracy',name:{ar:'الدقة المحاسبية',en:'Accounting Accuracy'},description:{ar:'إدخال البيانات',en:'Data entry'}, weight:14},
+                {id:'timeliness',          name:{ar:'الالتزام بالمواعيد',en:'Timeliness'},description:{ar:'الانضباط الزمني',en:'Time discipline'}, weight:12},
+                {id:'confidentiality',     name:{ar:'السرية والأمانة',en:'Confidentiality and Integrity'},description:{ar:'حفظ الأسرار',en:'Keeping secrets'}, weight:14},
                 {id:'organization_f',      name:{ar:'التنظيم',en:'Organization'},description:{ar:'ترتيب العمل',en:'Work order'}, weight:10},
-                {id:'accounting_standards',name:{ar:'الالتزام بالمعايير المحاسبية',en:'Accounting Standards'},description:{ar:'الدقة المهنية',en:'Professional accuracy'}, weight:10},
+                {id:'accounting_standards',name:{ar:'الالتزام بالمعايير المحاسبية',en:'Accounting Standards'},description:{ar:'الدقة المهنية',en:'Professional accuracy'}, weight:14},
                 {id:'task_completion_f',   name:{ar:'إنجاز المهام المالية في الوقت',en:'Timely Task Completion'},description:{ar:'الالتزام بالمواعيد',en:'Meeting deadlines'}, weight:10},
-                {id:'info_confidentiality',name:{ar:'حفظ سرية المعلومات المالية',en:'Financial Info Confidentiality'},description:{ar:'الأمانة',en:'Integrity'}, weight:10},
+                {id:'info_confidentiality',name:{ar:'حفظ سرية المعلومات المالية',en:'Financial Info Confidentiality'},description:{ar:'الأمانة',en:'Integrity'}, weight:12},
                 {id:'records_organization',name:{ar:'تنظيم السجلات والمستندات',en:'Records Organization'},description:{ar:'الترتيب والأرشفة',en:'Filing and archiving'}, weight:10}
             ]
         },
@@ -1838,28 +1885,28 @@ const ORGANIZATION_DATA = {
                 photographer: { name:{ar:'فريق التصوير',en:'Photography Team'}, supervisor:'أمين',
                     employees:[{id:'ammar',name:'عمار فادي عوض',position:{ar:'مصور',en:'Photographer'}}],
                     criteria:[
-                        {id:'photo_quality',   name:{ar:'جودة التصوير',en:'Photo Quality'},description:{ar:'الوضوح والإضاءة',en:'Clarity and lighting'}, weight:10},
-                        {id:'content_creativity',name:{ar:'التنوع والإبداع في المحتوى',en:'Content Creativity'},description:{ar:'الأفكار الجديدة',en:'Fresh ideas'}, weight:10},
-                        {id:'production_speed', name:{ar:'سرعة الإنتاج',en:'Production Speed'},description:{ar:'الكفاءة الزمنية',en:'Time efficiency'}, weight:10},
+                        {id:'photo_quality',   name:{ar:'جودة التصوير',en:'Photo Quality'},description:{ar:'الوضوح والإضاءة',en:'Clarity and lighting'}, weight:14},
+                        {id:'content_creativity',name:{ar:'التنوع والإبداع في المحتوى',en:'Content Creativity'},description:{ar:'الأفكار الجديدة',en:'Fresh ideas'}, weight:12},
+                        {id:'production_speed', name:{ar:'سرعة الإنتاج',en:'Production Speed'},description:{ar:'الكفاءة الزمنية',en:'Time efficiency'}, weight:12},
                         {id:'coordination',     name:{ar:'التنسيق مع فريق المونتاج',en:'Team Coordination'},description:{ar:'العمل الجماعي',en:'Teamwork'}, weight:10},
-                        {id:'peak_hours',       name:{ar:'التواجد في أوقات الذروة',en:'Peak Hours Presence'},description:{ar:'الالتزام بالتواجد',en:'Availability'}, weight:10}
+                        {id:'peak_hours',       name:{ar:'التواجد في أوقات الذروة',en:'Peak Hours Presence'},description:{ar:'الالتزام بالتواجد',en:'Availability'}, weight:12}
                     ]},
                 editor: { name:{ar:'فريق المونتاج',en:'Editing Team'}, supervisor:'أمين',
                     employees:[{id:'samer_e',name:'سامر جنيد',position:{ar:'مونتاج',en:'Video Editor'}}],
                     criteria:[
-                        {id:'editing_quality',  name:{ar:'جودة المونتاج',en:'Editing Quality'},description:{ar:'الاحترافية الفنية',en:'Technical professionalism'}, weight:10},
-                        {id:'delivery_speed_e', name:{ar:'سرعة التسليم',en:'Delivery Speed'},description:{ar:'الالتزام بالمواعيد',en:'Meeting deadlines'}, weight:10},
-                        {id:'editing_creativity',name:{ar:'الإبداع في التحرير',en:'Editing Creativity'},description:{ar:'الأفكار الإبداعية',en:'Creative ideas'}, weight:10},
-                        {id:'visual_identity',  name:{ar:'الالتزام بالهوية البصرية',en:'Visual Identity'},description:{ar:'التناسق مع الهوية',en:'Brand consistency'}, weight:10}
+                        {id:'editing_quality',  name:{ar:'جودة المونتاج',en:'Editing Quality'},description:{ar:'الاحترافية الفنية',en:'Technical professionalism'}, weight:14},
+                        {id:'delivery_speed_e', name:{ar:'سرعة التسليم',en:'Delivery Speed'},description:{ar:'الالتزام بالمواعيد',en:'Meeting deadlines'}, weight:12},
+                        {id:'editing_creativity',name:{ar:'الإبداع في التحرير',en:'Editing Creativity'},description:{ar:'الأفكار الإبداعية',en:'Creative ideas'}, weight:12},
+                        {id:'visual_identity',  name:{ar:'الالتزام بالهوية البصرية',en:'Visual Identity'},description:{ar:'التناسق مع الهوية',en:'Brand consistency'}, weight:12}
                     ]},
                 designer: { name:{ar:'فريق التصميم والإعلانات',en:'Design Team'}, supervisor:'أمين',
                     employees:[{id:'rabah',name:'رباح الحموي',position:{ar:'مصمم إعلان/ناشر',en:'Ad Designer/Publisher'}}],
                     criteria:[
-                        {id:'campaign_mgmt',     name:{ar:'إدارة الحملات الإعلانية المدفوعة',en:'Paid Campaign Management'},description:{ar:'الكفاءة الإعلانية',en:'Ad efficiency'}, weight:10},
+                        {id:'campaign_mgmt',     name:{ar:'إدارة الحملات الإعلانية المدفوعة',en:'Paid Campaign Management'},description:{ar:'الكفاءة الإعلانية',en:'Ad efficiency'}, weight:14},
                         {id:'interaction_d',     name:{ar:'التفاعل مع المتابعين',en:'Follower Interaction'},description:{ar:'سرعة التفاعل',en:'Interaction speed'}, weight:10},
-                        {id:'publishing_schedule',name:{ar:'الالتزام بجدول النشر',en:'Publishing Schedule'},description:{ar:'الانضباط الزمني',en:'Time discipline'}, weight:10},
+                        {id:'publishing_schedule',name:{ar:'الالتزام بجدول النشر',en:'Publishing Schedule'},description:{ar:'الانضباط الزمني',en:'Time discipline'}, weight:12},
                         {id:'off_hours',         name:{ar:'الرد خارج أوقات الدوام',en:'Off-Hours Response'},description:{ar:'المرونة',en:'Flexibility'}, weight:10},
-                        {id:'page_coordination', name:{ar:'تنسيق الصفحات والمحتوى',en:'Page Coordination'},description:{ar:'التنظيم',en:'Organization'}, weight:10}
+                        {id:'page_coordination', name:{ar:'تنسيق الصفحات والمحتوى',en:'Page Coordination'},description:{ar:'التنظيم',en:'Organization'}, weight:12}
                     ]},
                 social_media: { name:{ar:'فريق السوشيال ميديا',en:'Social Media Team'}, supervisor:'أمين',
                     employees:[
@@ -1868,10 +1915,10 @@ const ORGANIZATION_DATA = {
                     ],
                     criteria:[
                         {id:'country_knowledge',  name:{ar:'مستوى المعلومات عن الدولة وكيفية الرد',en:'Country Knowledge'},description:{ar:'المعرفة الثقافية',en:'Cultural knowledge'}, weight:10},
-                        {id:'interaction_sm',     name:{ar:'التفاعل مع المتابعين والرد على الرسائل',en:'Interaction'},description:{ar:'سرعة الرد',en:'Response speed'}, weight:10},
-                        {id:'readiness_peak',     name:{ar:'الجاهزية بأوقات الذروة والعروض',en:'Peak Readiness'},description:{ar:'التخطيط المسبق',en:'Advance planning'}, weight:10},
-                        {id:'off_hours_sm',       name:{ar:'الرد خارج أوقات الدوام',en:'Off-Hours Response'},description:{ar:'المرونة',en:'Flexibility'}, weight:10},
-                        {id:'field_knowledge',    name:{ar:'مستوى معلوماتهم وخبرتهم في مجال الشركة',en:'Field Knowledge'},description:{ar:'الخبرة المهنية',en:'Professional experience'}, weight:10}
+                        {id:'interaction_sm',     name:{ar:'التفاعل مع المتابعين والرد على الرسائل',en:'Interaction'},description:{ar:'سرعة الرد',en:'Response speed'}, weight:14},
+                        {id:'readiness_peak',     name:{ar:'الجاهزية بأوقات الذروة والعروض',en:'Peak Readiness'},description:{ar:'التخطيط المسبق',en:'Advance planning'}, weight:12},
+                        {id:'off_hours_sm',       name:{ar:'الرد خارج أوقات الدوام',en:'Off-Hours Response'},description:{ar:'المرونة',en:'Flexibility'}, weight:12},
+                        {id:'field_knowledge',    name:{ar:'مستوى معلوماتهم وخبرتهم في مجال الشركة',en:'Field Knowledge'},description:{ar:'الخبرة المهنية',en:'Professional experience'}, weight:12}
                     ]}
             }
         },
@@ -1915,24 +1962,24 @@ const ORGANIZATION_DATA = {
             },
             criteria: {
                 foremen:[
-                    {id:'instructions_accuracy',name:{ar:'تنفيذ التعليمات بدقة',en:'Accurate Execution'},description:{ar:'الالتزام بالتوجيهات',en:'Following directions'}, weight:10},
-                    {id:'measurements',         name:{ar:'المقاسات وشد الخيوط',en:'Measurements'},description:{ar:'الدقة الهندسية',en:'Engineering accuracy'}, weight:10},
-                    {id:'defect_detection',     name:{ar:'عزل الحجر السيئ واكتشاف العيوب',en:'Defect Detection'},description:{ar:'مراقبة الجودة',en:'Quality control'}, weight:10},
+                    {id:'instructions_accuracy',name:{ar:'تنفيذ التعليمات بدقة',en:'Accurate Execution'},description:{ar:'الالتزام بالتوجيهات',en:'Following directions'}, weight:8},
+                    {id:'measurements',         name:{ar:'المقاسات وشد الخيوط',en:'Measurements'},description:{ar:'الدقة الهندسية',en:'Engineering accuracy'}, weight:12},
+                    {id:'defect_detection',     name:{ar:'عزل الحجر السيئ واكتشاف العيوب',en:'Defect Detection'},description:{ar:'مراقبة الجودة',en:'Quality control'}, weight:12},
                     {id:'stone_arrangement',    name:{ar:'ترتيب الحجر في الموقع',en:'Stone Arrangement'},description:{ar:'التنظيم',en:'Organization'}, weight:10},
-                    {id:'finishing_quality',    name:{ar:'جودة التشطيب النهائي',en:'Finishing Quality'},description:{ar:'الإتقان',en:'Craftsmanship'}, weight:10},
-                    {id:'decor_arrangement',    name:{ar:'ترتيب الديكورات والإكسسوارات',en:'Décor Arrangement'},description:{ar:'الذوق الفني',en:'Aesthetic sense'}, weight:10},
+                    {id:'finishing_quality',    name:{ar:'جودة التشطيب النهائي',en:'Finishing Quality'},description:{ar:'الإتقان',en:'Craftsmanship'}, weight:12},
+                    {id:'decor_arrangement',    name:{ar:'ترتيب الديكورات والإكسسوارات',en:'Décor Arrangement'},description:{ar:'الذوق الفني',en:'Aesthetic sense'}, weight:8},
                     {id:'scaffolding_safety',   name:{ar:'تركيب السقالات بأمان',en:'Safe Scaffolding'},description:{ar:'السلامة',en:'Safety'}, weight:10},
                     {id:'installation_speed',   name:{ar:'سرعة التركيب مع الحفاظ على الجودة',en:'Installation Speed'},description:{ar:'التوازن بين السرعة والجودة',en:'Balance of speed and quality'}, weight:10},
-                    {id:'overtime',             name:{ar:'الاستعداد للعمل الإضافي',en:'Overtime Willingness'},description:{ar:'المرونة',en:'Flexibility'}, weight:10},
+                    {id:'overtime',             name:{ar:'الاستعداد للعمل الإضافي',en:'Overtime Willingness'},description:{ar:'المرونة',en:'Flexibility'}, weight:8},
                     {id:'daily_tasks',          name:{ar:'الإنجاز اليومي للمهام',en:'Daily Task Completion'},description:{ar:'الالتزام اليومي',en:'Daily commitment'}, weight:10}
                 ],
                 project_workers:[
-                    {id:'instructions_following',name:{ar:'تنفيذ التعليمات بدقة',en:'Following Instructions'},description:{ar:'الالتزام بالتوجيهات',en:'Following directions'}, weight:10},
-                    {id:'measurements_compliance',name:{ar:'الالتزام بالمقاسات المطلوبة',en:'Measurements Compliance'},description:{ar:'الدقة',en:'Accuracy'}, weight:10},
+                    {id:'instructions_following',name:{ar:'تنفيذ التعليمات بدقة',en:'Following Instructions'},description:{ar:'الالتزام بالتوجيهات',en:'Following directions'}, weight:12},
+                    {id:'measurements_compliance',name:{ar:'الالتزام بالمقاسات المطلوبة',en:'Measurements Compliance'},description:{ar:'الدقة',en:'Accuracy'}, weight:12},
                     {id:'defect_isolation',      name:{ar:'اكتشاف وعزل الحجر المعيب',en:'Defect Isolation'},description:{ar:'مراقبة الجودة',en:'Quality control'}, weight:10},
                     {id:'workplace_organization',name:{ar:'ترتيب مكان العمل',en:'Workplace Organization'},description:{ar:'النظام',en:'Order'}, weight:10},
-                    {id:'safety_p',              name:{ar:'الالتزام بإجراءات السلامة',en:'Safety Procedures'},description:{ar:'الوعي بالسلامة',en:'Safety awareness'}, weight:10},
-                    {id:'task_speed_p',          name:{ar:'سرعة إنجاز المهام',en:'Task Speed'},description:{ar:'الكفاءة',en:'Efficiency'}, weight:10}
+                    {id:'safety_p',              name:{ar:'الالتزام بإجراءات السلامة',en:'Safety Procedures'},description:{ar:'الوعي بالسلامة',en:'Safety awareness'}, weight:14},
+                    {id:'task_speed_p',          name:{ar:'سرعة إنجاز المهام',en:'Task Speed'},description:{ar:'الكفاءة',en:'Efficiency'}, weight:12}
                 ]
             }
         },
@@ -1962,38 +2009,38 @@ const ORGANIZATION_DATA = {
             },
             criteria: {
                 project_workers:[
-                    {id:'instructions_m',    name:{ar:'تنفيذ التعليمات بدقة',en:'Execute Instructions'},description:{ar:'الالتزام بالتوجيهات',en:'Following directions'}, weight:10},
-                    {id:'measurements_m',    name:{ar:'الدقة في المقاسات',en:'Measurement Accuracy'},description:{ar:'الدقة الهندسية',en:'Engineering accuracy'}, weight:10},
+                    {id:'instructions_m',    name:{ar:'تنفيذ التعليمات بدقة',en:'Execute Instructions'},description:{ar:'الالتزام بالتوجيهات',en:'Following directions'}, weight:12},
+                    {id:'measurements_m',    name:{ar:'الدقة في المقاسات',en:'Measurement Accuracy'},description:{ar:'الدقة الهندسية',en:'Engineering accuracy'}, weight:12},
                     {id:'stone_defect_m',    name:{ar:'عزل الحجر السيئ واكتشاف العيوب',en:'Defect Detection'},description:{ar:'مراقبة الجودة',en:'Quality control'}, weight:10},
                     {id:'stone_arrangement_m',name:{ar:'ترتيب الحجر في الموقع',en:'Stone Arrangement'},description:{ar:'التنظيم',en:'Organization'}, weight:10},
-                    {id:'work_safety_m',     name:{ar:'السلامة في العمل',en:'Work Safety'},description:{ar:'الوعي بالسلامة',en:'Safety awareness'}, weight:10},
-                    {id:'work_speed_m',      name:{ar:'سرعة الإنجاز',en:'Work Speed'},description:{ar:'الكفاءة',en:'Efficiency'}, weight:10},
+                    {id:'work_safety_m',     name:{ar:'السلامة في العمل',en:'Work Safety'},description:{ar:'الوعي بالسلامة',en:'Safety awareness'}, weight:14},
+                    {id:'work_speed_m',      name:{ar:'سرعة الإنجاز',en:'Work Speed'},description:{ar:'الكفاءة',en:'Efficiency'}, weight:12},
                     {id:'material_preservation',name:{ar:'المحافظة على المواد',en:'Material Preservation'},description:{ar:'تقليل الفاقد',en:'Reducing waste'}, weight:10}
                 ],
                 cutting_workers:[
-                    {id:'cutting_accuracy',name:{ar:'دقة القص حسب المقاسات',en:'Cutting Accuracy'},description:{ar:'الدقة الهندسية',en:'Engineering accuracy'}, weight:10},
+                    {id:'cutting_accuracy',name:{ar:'دقة القص حسب المقاسات',en:'Cutting Accuracy'},description:{ar:'الدقة الهندسية',en:'Engineering accuracy'}, weight:12},
                     {id:'waste_reduction', name:{ar:'تقليل الهدر في المواد',en:'Waste Reduction'},description:{ar:'الكفاءة الاقتصادية',en:'Economic efficiency'}, weight:10},
-                    {id:'machine_safety',  name:{ar:'سلامة تشغيل آلات القص',en:'Machine Safety'},description:{ar:'الوعي بالسلامة',en:'Safety awareness'}, weight:10},
-                    {id:'edge_quality',    name:{ar:'جودة الحواف ونظافتها',en:'Edge Quality'},description:{ar:'الإتقان',en:'Craftsmanship'}, weight:10},
+                    {id:'machine_safety',  name:{ar:'سلامة تشغيل آلات القص',en:'Machine Safety'},description:{ar:'الوعي بالسلامة',en:'Safety awareness'}, weight:12},
+                    {id:'edge_quality',    name:{ar:'جودة الحواف ونظافتها',en:'Edge Quality'},description:{ar:'الإتقان',en:'Craftsmanship'}, weight:12},
                     {id:'machine_maint',   name:{ar:'الصيانة البسيطة للآلات',en:'Basic Machine Maintenance'},description:{ar:'العناية بالمعدات',en:'Equipment care'}, weight:10},
-                    {id:'productivity_m',  name:{ar:'الإنتاجية وجودة القطع',en:'Productivity'},description:{ar:'الكفاءة والجودة',en:'Efficiency and quality'}, weight:10}
+                    {id:'productivity_m',  name:{ar:'الإنتاجية وجودة القطع',en:'Productivity'},description:{ar:'الكفاءة والجودة',en:'Efficiency and quality'}, weight:14}
                 ],
                 installation_workers:[
-                    {id:'install_accuracy',name:{ar:'دقة التركيب حسب التصميم',en:'Installation Accuracy'},description:{ar:'الدقة الهندسية',en:'Engineering accuracy'}, weight:10},
-                    {id:'install_speed',   name:{ar:'سرعة التركيب مع الحفاظ على الجودة',en:'Installation Speed'},description:{ar:'التوازن بين السرعة والجودة',en:'Balance of speed and quality'}, weight:10},
-                    {id:'install_align',   name:{ar:'تنسيق واستواء التركيب',en:'Alignment'},description:{ar:'الدقة البصرية',en:'Visual precision'}, weight:10},
-                    {id:'tool_skills',     name:{ar:'مهارة استخدام أدوات التركيب',en:'Tool Skills'},description:{ar:'الكفاءة الفنية',en:'Technical skill'}, weight:10},
+                    {id:'install_accuracy',name:{ar:'دقة التركيب حسب التصميم',en:'Installation Accuracy'},description:{ar:'الدقة الهندسية',en:'Engineering accuracy'}, weight:14},
+                    {id:'install_speed',   name:{ar:'سرعة التركيب مع الحفاظ على الجودة',en:'Installation Speed'},description:{ar:'التوازن بين السرعة والجودة',en:'Balance of speed and quality'}, weight:12},
+                    {id:'install_align',   name:{ar:'تنسيق واستواء التركيب',en:'Alignment'},description:{ar:'الدقة البصرية',en:'Visual precision'}, weight:12},
+                    {id:'tool_skills',     name:{ar:'مهارة استخدام أدوات التركيب',en:'Tool Skills'},description:{ar:'الكفاءة الفنية',en:'Technical skill'}, weight:12},
                     {id:'cleaning_after',  name:{ar:'تنظيف المكان بعد التركيب',en:'Post-Installation Cleaning'},description:{ar:'الاحترافية',en:'Professionalism'}, weight:10},
                     {id:'professionalism_m',name:{ar:'الاحترافية في التعامل في مواقع العملاء',en:'Professionalism'},description:{ar:'حسن التعامل',en:'Good conduct'}, weight:10}
                 ],
                 finishing_workers:[
-                    {id:'finishing_quality_m',name:{ar:'جودة التشطيب النهائي',en:'Finishing Quality'},description:{ar:'الإتقان',en:'Craftsmanship'}, weight:10},
-                    {id:'attention_detail',   name:{ar:'الاهتمام بالتفاصيل الدقيقة',en:'Attention to Detail'},description:{ar:'الدقة',en:'Precision'}, weight:10},
-                    {id:'treatment_quality',  name:{ar:'جودة المعالجات النهائية',en:'Treatment Quality'},description:{ar:'الإتقان الفني',en:'Technical craftsmanship'}, weight:10},
+                    {id:'finishing_quality_m',name:{ar:'جودة التشطيب النهائي',en:'Finishing Quality'},description:{ar:'الإتقان',en:'Craftsmanship'}, weight:14},
+                    {id:'attention_detail',   name:{ar:'الاهتمام بالتفاصيل الدقيقة',en:'Attention to Detail'},description:{ar:'الدقة',en:'Precision'}, weight:12},
+                    {id:'treatment_quality',  name:{ar:'جودة المعالجات النهائية',en:'Treatment Quality'},description:{ar:'الإتقان الفني',en:'Technical craftsmanship'}, weight:12},
                     {id:'safety_finishing',   name:{ar:'التعامل الآمن مع مواد التشطيب',en:'Safe Material Handling'},description:{ar:'الوعي بالسلامة',en:'Safety awareness'}, weight:10},
                     {id:'surface_protection', name:{ar:'الحفاظ على السطح من الخدوش',en:'Surface Protection'},description:{ar:'الحرص والانتباه',en:'Care and attention'}, weight:10},
                     {id:'finishing_speed',    name:{ar:'سرعة إنجاز التشطيب',en:'Finishing Speed'},description:{ar:'الكفاءة',en:'Efficiency'}, weight:10},
-                    {id:'final_inspection',   name:{ar:'الفحص النهائي للجودة',en:'Final Inspection'},description:{ar:'مراقبة الجودة',en:'Quality control'}, weight:10}
+                    {id:'final_inspection',   name:{ar:'الفحص النهائي للجودة',en:'Final Inspection'},description:{ar:'مراقبة الجودة',en:'Quality control'}, weight:12}
                 ]
             }
         }
@@ -2079,9 +2126,11 @@ class EvaluationApp {
             'departmentRatingLegend',
             'summaryCard','summaryGeneral','summaryDepartment','summaryPercentage','summaryGrade','summaryMessage',
             'summaryGeneralSubtext','summaryDepartmentSubtext','summaryPercentageSubtext','summaryTotalMax',
+            'radarChart',
             'finalScore','finalMaxLabel','scoreGrade','performanceTips','scoreProgress','totalScoreDisplay',
             'logoModalTitle','logoPreviewTitle','logoCancelText','logoSaveText',
             'openArchiveBtn','archiveModal','archiveList','closeArchiveBtn','clearArchiveBtn',
+            'archiveSearch','archiveDeptFilter','exportCsvBtn',
             'viewModal','viewContent','viewReprintBtn','viewCloseBtn','pdfReport',
             'pdfReportTitle','pdfInfoTable','pdfCriteria','pdfTotal','pdfNotes','pdfSignatures',
             'loginTitle','loginSubtitle','loginDeptLabel','loginDeptPlaceholder','loginUsernameLabel','loginPasswordLabel',
@@ -2104,6 +2153,7 @@ class EvaluationApp {
         // تحميل الموظفين من قاعدة البيانات (مع إنشائها تلقائياً عند أول استخدام)
         this.loadEmployees().then(() => {
             this.applyLanguageTexts();
+            this.restoreDraft();
             // If user is not HR, auto-select their dept
             if (currentUser && currentUser.dept !== 'hr') {
                 this.state.currentDepartment = currentUser.dept;
@@ -2121,9 +2171,9 @@ class EvaluationApp {
         this.el.generateAndSend.addEventListener('click', () => this.generateAndSendReport());
         this.el.notificationClose.addEventListener('click', () => this.hideNotification());
         this.el.langSwitch.addEventListener('click', () => this.switchLanguage());
-        this.el.generalNotes.addEventListener('input', e => { this.state.notes.general = e.target.value; });
-        this.el.departmentNotes.addEventListener('input', e => { this.state.notes.department = e.target.value; });
-        this.el.overallNotes.addEventListener('input', e => { this.state.notes.overall = e.target.value; });
+        this.el.generalNotes.addEventListener('input', e => { this.state.notes.general = e.target.value; this.autosaveDraft(); });
+        this.el.departmentNotes.addEventListener('input', e => { this.state.notes.department = e.target.value; this.autosaveDraft(); });
+        this.el.overallNotes.addEventListener('input', e => { this.state.notes.overall = e.target.value; this.autosaveDraft(); });
         window.addEventListener('beforeprint', () => this.prepareForPrint());
         window.addEventListener('afterprint',  () => this.cleanupAfterPrint());
 
@@ -2132,6 +2182,9 @@ class EvaluationApp {
         this.el.closeArchiveBtn.addEventListener('click', () => this.closeArchive());
         this.el.clearArchiveBtn.addEventListener('click', () => this.clearArchive());
         this.el.archiveModal.addEventListener('click', e => { if (e.target === this.el.archiveModal) this.closeArchive(); });
+        this.el.archiveSearch.addEventListener('input', () => this.renderArchiveList());
+        this.el.archiveDeptFilter.addEventListener('change', () => this.renderArchiveList());
+        this.el.exportCsvBtn.addEventListener('click', () => this.exportArchiveCSV());
         this.el.viewCloseBtn.addEventListener('click', () => this.closeView());
         this.el.viewModal.addEventListener('click', e => { if (e.target === this.el.viewModal) this.closeView(); });
         this.el.viewReprintBtn.addEventListener('click', () => this.reprintView());
@@ -2270,7 +2323,7 @@ class EvaluationApp {
         }
 
         const criteria = this.getDepartmentCriteria(deptId, this.state.currentEmployee, lang);
-        const deptMax  = criteria.length * 10;
+        const deptMax  = criteria.reduce((s, c) => s + (c.weight || 10), 0);
         this.el.departmentMaxLabel.textContent = deptMax;
         this.el.departmentPointsBox.style.display = criteria.length ? 'block' : 'none';
         this.el.departmentRatingLegend.style.display = criteria.length ? 'flex' : 'none';
@@ -2289,12 +2342,13 @@ class EvaluationApp {
                 </td></tr>`;
         } else {
             criteria.forEach(c => {
+                const w           = c.weight || 10;
                 const rating     = this.state.ratings.department.get(c.id) || 0;
-                const calculated = rating > 0 ? ((rating / 5) * 10).toFixed(1) : '0.0';
+                const calculated = rating > 0 ? ((rating / 5) * w).toFixed(1) : '0.0';
                 html += `<tr class="${rating>0?'':'unrated-row'}">
                     <td><div class="criteria-name">${c.name[lang]}</div></td>
                     <td><div class="criteria-description">${c.description ? (c.description[lang]||'') : ''}</div></td>
-                    <td style="text-align:center;"><span class="weight-badge">10</span></td>
+                    <td style="text-align:center;"><span class="weight-badge">${w}</span></td>
                     <td>
                         <div class="rating-controls" data-criterion-id="${c.id}" data-criterion-type="department">
                             ${[1,2,3,4,5].map(n=>`<div class="rating-btn ${rating===n?'selected':''}" data-value="${n}" title="${this.ratingLabel(n)}">${n}</div>`).join('')}
@@ -2339,7 +2393,16 @@ class EvaluationApp {
             if (team && dept.criteria[team]) return dept.criteria[team] || [];
             return dept.criteria.project_workers || [];
         }
+        if (deptId === 'warehouse') {
+            if (posAr.includes('تسليم') || posAr.toLowerCase().includes('delivery')) return dept.criteria.delivery_worker || [];
+            if (posAr.includes('ادخالات') || posAr.includes('إدخالات') || posAr.toLowerCase().includes('data')) return dept.criteria.entry_worker || [];
+            return dept.criteria.warehouse_worker || [];
+        }
         if (Array.isArray(dept.criteria)) return dept.criteria;
+        if (dept.criteria && typeof dept.criteria === 'object') {
+            const first = Object.keys(dept.criteria)[0];
+            return dept.criteria[first] || [];
+        }
         return [];
     }
 
@@ -2361,13 +2424,14 @@ class EvaluationApp {
                     if (cv) {
                         const criterion = this.getCriterionById(type, cid);
                         if (criterion) {
-                            const w = type === 'general' ? criterion.weight : 10;
+                            const w = criterion.weight || 10;
                             cv.textContent = ((value / 5) * w).toFixed(1);
                             cv.classList.remove('empty');
                         }
                     }
                     this.updateCompletionBadges();
                     this.updateScores();
+                    this.autosaveDraft();
                 });
             });
         });
@@ -2385,7 +2449,7 @@ class EvaluationApp {
         let total = 0;
         criteria.forEach(c => {
             const rating = this.state.ratings[type].get(c.id) || 0;
-            if (rating > 0) total += (rating / 5) * (type === 'general' ? c.weight : 10);
+            if (rating > 0) total += (rating / 5) * (c.weight || 10);
         });
         return Math.round(total * 100) / 100;
     }
@@ -2396,7 +2460,7 @@ class EvaluationApp {
 
     getDepartmentMax() {
         const criteria = this.getDepartmentCriteria(this.state.currentDepartment, this.state.currentEmployee);
-        return criteria.length * 10;
+        return criteria.reduce((s, c) => s + (c.weight || 10), 0);
     }
 
     countRated(type, criteria) {
@@ -2425,13 +2489,14 @@ class EvaluationApp {
         if (pct >= 80) return { name: lang==='ar'?'جيد جداً':'Very Good', message: lang==='ar'?'أداء عالي':'High Performance', color:'#2ecc71' };
         if (pct >= 70) return { name: lang==='ar'?'جيد':'Good',           message: lang==='ar'?'أداء جيد':'Good Performance',  color:'#f39c12' };
         if (pct >= 60) return { name: lang==='ar'?'مقبول':'Acceptable',   message: lang==='ar'?'أداء مقبول':'Acceptable',      color:'#e67e22' };
-        return { name: lang==='ar'?'ضعيف':'Weak', message: lang==='ar'?'يحتاج للتحسين':'Needs Improvement', color:'#e74c3c' };
+        if (pct >= 50) return { name: lang==='ar'?'ضعيف':'Weak',          message: lang==='ar'?'يحتاج للتحسين':'Needs Improvement', color:'#e74c3c' };
+        return { name: lang==='ar'?'ضعيف جداً':'Very Weak', message: lang==='ar'?'أداء غير مقبول':'Unsatisfactory Performance', color:'#c0392b' };
     }
 
     updateScores() {
         const generalMax   = this.getGeneralMax();
         const deptCriteria = this.getDepartmentCriteria(this.state.currentDepartment, this.state.currentEmployee);
-        const deptMax       = deptCriteria.length * 10;
+        const deptMax       = deptCriteria.reduce((s, c) => s + (c.weight || 10), 0);
         const totalMax      = generalMax + deptMax;
 
         const genScore  = this.calculateScore('general', ORGANIZATION_DATA.general);
@@ -2468,11 +2533,66 @@ class EvaluationApp {
             this.el.summaryCard.style.display       = 'none';
             this.el.totalScoreDisplay.style.display = 'none';
         }
+        this.renderRadarChart();
+    }
+
+    renderRadarChart() {
+        if (typeof Chart === 'undefined' || !this.el.radarChart) return;
+        const lang = this.state.currentLanguage;
+        const genCriteria = ORGANIZATION_DATA.general;
+        const deptCriteria = this.getDepartmentCriteria(this.state.currentDepartment, this.state.currentEmployee);
+
+        const labels = [];
+        const values = [];
+        genCriteria.forEach(c => {
+            const r = this.state.ratings.general.get(c.id) || 0;
+            labels.push(c.name[lang]);
+            values.push(r > 0 ? Math.round((r / 5) * 100) : 0);
+        });
+        deptCriteria.forEach(c => {
+            const r = this.state.ratings.department.get(c.id) || 0;
+            labels.push(c.name[lang]);
+            values.push(r > 0 ? Math.round((r / 5) * 100) : 0);
+        });
+        if (labels.length === 0) return;
+
+        const ctx = this.el.radarChart.getContext('2d');
+        if (this.radarChartInstance) this.radarChartInstance.destroy();
+        this.radarChartInstance = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels,
+                datasets: [{
+                    label: lang === 'ar' ? 'نسبة إنجاز المعيار' : 'Criterion achievement %',
+                    data: values,
+                    backgroundColor: 'rgba(255,255,255,0.18)',
+                    borderColor: '#f0d080',
+                    pointBackgroundColor: '#c9a84c',
+                    pointBorderColor: '#fff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    r: {
+                        suggestedMin: 0,
+                        suggestedMax: 100,
+                        ticks: { stepSize: 20, color: 'rgba(255,255,255,0.7)', backdropColor: 'transparent' },
+                        angleLines: { color: 'rgba(255,255,255,0.25)' },
+                        grid: { color: 'rgba(255,255,255,0.25)' },
+                        pointLabels: { color: '#e8edf2', font: { size: 10 } }
+                    }
+                },
+                plugins: { legend: { labels: { color: '#fff' } } }
+            }
+        });
     }
 
     hideSummary() {
         this.el.summaryCard.style.display       = 'none';
         this.el.totalScoreDisplay.style.display = 'none';
+        if (this.radarChartInstance) { this.radarChartInstance.destroy(); this.radarChartInstance = null; }
     }
 
     // ------------------------------------------------------------
@@ -2813,10 +2933,34 @@ class EvaluationApp {
     // سجل التقييمات (Archive)
     // ============================================================
     async openArchive() {
+        this.populateArchiveDeptFilter();
         this.el.archiveModal.classList.add('show');
         await this.renderArchiveList();
     }
     closeArchive() { this.el.archiveModal.classList.remove('show'); }
+
+    populateArchiveDeptFilter() {
+        const sel = this.el.archiveDeptFilter;
+        const current = sel.value;
+        const depts = new Set(this.getStorageRecords().map(r => r.department).filter(Boolean));
+        sel.innerHTML = `<option value="">كل الأقسام</option>`;
+        [...depts].sort().forEach(d => {
+            const o = document.createElement('option');
+            o.value = d;
+            o.textContent = d;
+            sel.appendChild(o);
+        });
+        if (current) sel.value = current;
+    }
+
+    getFilteredRecords() {
+        const q = (this.el.archiveSearch.value || '').trim().toLowerCase();
+        const d = this.el.archiveDeptFilter.value;
+        let records = this.getStorageRecords().slice().reverse();
+        if (q) records = records.filter(r => (r.employee_name || '').toLowerCase().includes(q) || (r.department || '').toLowerCase().includes(q));
+        if (d) records = records.filter(r => (r.department || '') === d);
+        return records;
+    }
 
     async renderArchiveList() {
         const lang = this.state.currentLanguage;
@@ -2824,12 +2968,15 @@ class EvaluationApp {
         const box = this.el.archiveList;
         box.innerHTML = '<div class="archive-empty"><i class="fas fa-spinner fa-spin"></i><h3>...</h3></div>';
 
-        const records = this.getStorageRecords();
-        if (!records.length) {
-            box.innerHTML = `<div class="archive-empty"><i class="fas fa-database"></i><h3>${t.archiveEmptyTitle}</h3><p>${t.archiveEmptyText}</p></div>`;
+        const list = this.getFilteredRecords();
+        if (!list.length) {
+            const hasAny = this.getStorageRecords().length > 0;
+            const msg = hasAny
+                ? `<h3>${lang==='ar'?'لا توجد نتائج مطابقة':'No matching results'}</h3><p>${lang==='ar'?'جرّب تعديل البحث أو الفلتر':'Try adjusting the search or filter'}</p>`
+                : `<h3>${t.archiveEmptyTitle}</h3><p>${t.archiveEmptyText}</p>`;
+            box.innerHTML = `<div class="archive-empty">${msg}</div>`;
             return;
         }
-        const list = records.slice().reverse();
         let html = `<table class="archive-table"><thead><tr>
             <th>${t.archiveThId}</th><th>${t.archiveThEmployee}</th><th>${t.archiveThDept}</th>
             <th>${t.archiveThDate}</th><th>${t.archiveThScore}</th><th>${t.archiveThGrade}</th><th>${t.archiveThActions}</th>
@@ -2862,6 +3009,36 @@ class EvaluationApp {
         });
     }
 
+    exportArchiveCSV() {
+        const lang = this.state.currentLanguage;
+        const records = this.getFilteredRecords();
+        if (!records.length) {
+            this.showNotification('info', lang==='ar'?'تنبيه':'Notice', lang==='ar'?'لا توجد بيانات للتصدير':'No data to export');
+            return;
+        }
+        const headers = ['الموظف','القسم','المشرف','المقيِّم','التاريخ','النتيجة','التقدير'];
+        const esc = (v) => {
+            const s = String(v == null ? '' : v);
+            return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
+        };
+        const lines = [headers.map(esc).join(',')];
+        records.forEach(r => {
+            lines.push([r.employee_name, r.department, r.supervisor, r.evaluator, r.evaluation_date,
+                `${r.total_score}/${r.total_max} (${r.percentage}%)`, r.grade].map(esc).join(','));
+        });
+        const csv = '\uFEFF' + lines.join('\n');  // BOM لتفادي مشاكل ترميز العربية في Excel
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `سجل_التقييمات_${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+        this.showNotification('success', lang==='ar'?'تم التصدير':'Exported', lang==='ar'?'تم تصدير سجل التقييمات بنجاح':'Evaluation records exported');
+    }
+
     async viewEvaluation(id) {
         try {
             const record = this.findRecord(id);
@@ -2891,6 +3068,35 @@ class EvaluationApp {
         }
     }
     closeView() { this.el.viewModal.classList.remove('show'); this.viewingRecord = null; }
+
+    autosaveDraft() {
+        try {
+            const draft = {
+                notes: { general: this.state.notes.general, department: this.state.notes.department, overall: this.state.notes.overall },
+                ratings: { general: Array.from(this.state.ratings.general.entries()), department: Array.from(this.state.ratings.department.entries()) }
+            };
+            localStorage.setItem(CONFIG.DRAFT_KEY, JSON.stringify(draft));
+        } catch (e) { console.warn('تعذر حفظ draft', e); }
+    }
+
+    restoreDraft() {
+        try {
+            const draft = JSON.parse(localStorage.getItem(CONFIG.DRAFT_KEY) || 'null');
+            if (!draft) return;
+            this.state.notes.general = draft.notes.general || '';
+            this.state.notes.department = draft.notes.department || '';
+            this.state.notes.overall = draft.notes.overall || '';
+            if (this.el.generalNotes) this.el.generalNotes.value = this.state.notes.general;
+            if (this.el.departmentNotes) this.el.departmentNotes.value = this.state.notes.department;
+            if (this.el.overallNotes) this.el.overallNotes.value = this.state.notes.overall;
+
+            // Restore ratings
+            this.state.ratings.general = new Map(draft.ratings.general || []);
+            this.state.ratings.department = new Map(draft.ratings.department || []);
+            this.renderGeneralCriteria();
+            this.renderDepartmentCriteria();
+        } catch (e) { console.warn('تعذر استعادة draft', e); }
+    }
 
     async reprintView() {
         if (!this.viewingRecord) return;
@@ -2949,7 +3155,8 @@ class EvaluationApp {
         if (p >= 80) return { name: 'جيد جداً', color: '#2ecc71' };
         if (p >= 70) return { name: 'جيد', color: '#f39c12' };
         if (p >= 60) return { name: 'مقبول', color: '#e67e22' };
-        return { name: 'ضعيف', color: '#e74c3c' };
+        if (p >= 50) return { name: 'ضعيف', color: '#e74c3c' };
+        return { name: 'ضعيف جداً', color: '#c0392b' };
     }
 
     // ------------------------------------------------------------
@@ -2984,7 +3191,7 @@ class EvaluationApp {
             id: c.id,
             name: c.name[lang],
             description: (c.description || {})[lang] || '',
-            weight: 10,
+            weight: c.weight || 10,
             rating: this.state.ratings.department.get(c.id) || 0
         }));
 
